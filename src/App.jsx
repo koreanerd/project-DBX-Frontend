@@ -1,53 +1,28 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  getAuth,
-  onAuthStateChanged,
-} from "firebase/auth";
-import axios from "axios";
-import { auth } from "../config/firebase-config";
+import useUser from "../hooks/useUser";
 import Header from "./components/Header";
 import Login from "./components/Login";
 
 function App() {
+  const { userData, userEmail, handleGoogleLogin } = useUser();
   const navigate = useNavigate();
-  const [userData, setUserData] = useState(null);
-  const [userEmail, setUserEmail] = useState(null);
+  const [error, setError] = useState(null);
 
-  async function handleGoogleLogin() {
+  async function handleLogin() {
     try {
-      const provider = new GoogleAuthProvider();
-      const data = await signInWithPopup(auth, provider);
-
-      setUserData(data._tokenResponse);
-
-      const response = await axios.post(
-        "http://localhost:3000/login",
-        data._tokenResponse
-      );
-
-      if (response.data.result !== "ok") {
+      const data = await handleGoogleLogin();
+      if (data.result !== "ok") {
+        setError("Login failed. Please try again.");
         navigate("/login");
-        return; // eslint-disable-line no-useless-return
+      } else {
+        navigate(data.isUser ? "/logo-dashboard" : "/initial-setup");
       }
-
-      navigate(response.data.isUser ? "/logo-dashboard" : "/initial-setup");
     } catch (err) {
+      setError(err.message);
       navigate("/login");
     }
   }
-
-  useEffect(() => {
-    const authenticate = getAuth();
-
-    onAuthStateChanged(authenticate, user => {
-      if (user) {
-        setUserEmail(user.email);
-      }
-    });
-  }, []);
 
   return (
     <div className="relative bg-gradient-to-b from-stone-300 via-stone-300 to-black">
@@ -58,9 +33,10 @@ function App() {
             path="/login"
             element={
               <Login
-                handleGoogleLogin={handleGoogleLogin}
+                handleGoogleLogin={handleLogin}
                 userData={userData}
                 userEmail={userEmail}
+                error={error}
               />
             }
           />
