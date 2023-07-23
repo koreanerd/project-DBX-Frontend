@@ -1,8 +1,21 @@
 /** @type {import('tailwindcss').Config} */
+import forms from "@tailwindcss/forms";
+
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        stone: {
+          400: "#A8A29E",
+        },
+      },
+    },
   },
-  plugins: [],
+  variants: {
+    extend: {
+      textColor: ["placeholder"],
+    },
+  },
+  plugins: [forms],
 };
