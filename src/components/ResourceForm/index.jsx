@@ -6,6 +6,9 @@ import FileInput from "./FileInput";
 import UserContext from "../../../contexts/UserContext";
 
 function ResourceForm() {
+  const user = useContext(UserContext);
+  const { userEmail } = user;
+  const [previewSource, setPreviewSource] = useState(null);
   const [requiredLogoDetails, setRequiredLogoDetails] = useState({
     name: "",
     description: "",
@@ -18,12 +21,10 @@ function ResourceForm() {
     "3x": null,
     "4x": null,
   });
-  const [previewSource, setPreviewSource] = useState(null);
-  const user = useContext(UserContext);
-  const { userEmail } = user;
 
   function handleInputChange(event) {
     const { name, value } = event.target;
+
     setRequiredLogoDetails(prevData => ({ ...prevData, [name]: value }));
   }
 
@@ -106,6 +107,7 @@ function ResourceForm() {
 
       if (file) {
         const svg = await readFileAsText(file);
+
         return {
           file: {
             fileName: mode,
@@ -113,6 +115,7 @@ function ResourceForm() {
           },
         };
       }
+
       return null;
     });
 
@@ -122,18 +125,19 @@ function ResourceForm() {
 
     try {
       const API_ENDPOINT = "http://localhost:3000/temp/endpoint/address";
-
       const response = await axios.post(API_ENDPOINT, postData, {
         headers: {
           "Content-Type": "application/json",
         },
       });
 
-      if (response.status === 200) {
-        toast.success("Upload successful!");
-      } else {
+      if (response.status !== 200) {
         toast.error("Upload failed. Please try again.");
+
+        return;
       }
+
+      toast.success("Upload successful!");
     } catch (error) {
       toast.error("Error uploading data. Please try again.");
     }
