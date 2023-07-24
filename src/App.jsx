@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import useUser from "../hooks/useUser";
 import UserContext from "../contexts/UserContext";
 import Header from "./components/Header";
@@ -40,6 +41,7 @@ function App() {
             <Route path="/logo-dashboard" />
           </Routes>
         </main>
+        <Toaster />
       </div>
     </UserContext.Provider>
   );
