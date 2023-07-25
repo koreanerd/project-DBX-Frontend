@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import useUser from "../hooks/useUser";
 import UserContext from "../contexts/UserContext";
 import Header from "./components/Header";
 import Login from "./components/Login";
+import ResourceForm from "./components/ResourceForm";
 
 function App() {
   const user = useUser();
@@ -17,7 +19,7 @@ function App() {
         setError("Login failed. Please try again.");
         navigate("/login");
       } else {
-        navigate(data.isUser ? "/logo-dashboard" : "/initial-setup");
+        navigate(data.isUser ? "/logo-dashboard" : "/new-resource-form");
       }
     } catch (err) {
       setError(err.message);
@@ -35,10 +37,11 @@ function App() {
               path="/login"
               element={<Login handleGoogleLogin={handleLogin} error={error} />}
             />
-            <Route path="/initial-setup" />
+            <Route path="/new-resource-form" element={<ResourceForm />} />
             <Route path="/logo-dashboard" />
           </Routes>
         </main>
+        <Toaster />
       </div>
     </UserContext.Provider>
   );
