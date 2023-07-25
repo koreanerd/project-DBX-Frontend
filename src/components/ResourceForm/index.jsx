@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 import FileInput from "./FileInput";
+import UserContext from "../../../contexts/UserContext";
 
 function ResourceForm() {
+  const user = useContext(UserContext);
+  const { userEmail } = user;
+  const [previewSource, setPreviewSource] = useState(null);
   const [requiredLogoDetails, setRequiredLogoDetails] = useState({
     name: "",
     description: "",
     default: null,
-    categoryId: null,
   });
-
   const [logoImagesByMode, setLogoImagesByMode] = useState({
     darkmode: null,
     "1.5x": null,
@@ -19,10 +22,9 @@ function ResourceForm() {
     "4x": null,
   });
 
-  const [previewSource, setPreviewSource] = useState(null);
-
   function handleInputChange(event) {
     const { name, value } = event.target;
+
     setRequiredLogoDetails(prevData => ({ ...prevData, [name]: value }));
   }
 
@@ -63,11 +65,82 @@ function ResourceForm() {
     setLogoImagesByMode(prevFiles => ({ ...prevFiles, [mode]: file }));
   }
 
-  function handleSubmit(event) {
+  function readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = event => resolve(event.target.result);
+      reader.onerror = error => reject(error);
+      reader.readAsText(file);
+    });
+  }
+
+  async function handleSubmit(event) {
     event.preventDefault();
-    console.log(requiredLogoDetails);
-    console.log(logoImagesByMode);
-    // Add submit logic here
+
+    const date = new Date().toString();
+
+    const postData = {
+      name: `${requiredLogoDetails.name}.svg`,
+      categoryId: "null",
+      detail: {
+        version: "1.0.0",
+        uploadDate: date,
+        email: userEmail,
+      },
+      files: [],
+    };
+
+    const modes = ["default", "darkmode", "1.5x", "2x", "3x", "4x"];
+
+    if (requiredLogoDetails.default) {
+      const defaultLogoSvg = await readFileAsText(requiredLogoDetails.default);
+      postData.files.push({
+        file: {
+          fileName: "default",
+          svgFile: defaultLogoSvg,
+        },
+      });
+    }
+
+    const filePromises = modes.map(async mode => {
+      const file = logoImagesByMode[mode];
+
+      if (file) {
+        const svg = await readFileAsText(file);
+
+        return {
+          file: {
+            fileName: mode,
+            svgFile: svg,
+          },
+        };
+      }
+
+      return null;
+    });
+
+    const fileDetails = await Promise.all(filePromises);
+
+    postData.files = [...postData.files, ...fileDetails.filter(Boolean)];
+
+    try {
+      const API_ENDPOINT = "http://localhost:3000/temp/endpoint/address";
+      const response = await axios.post(API_ENDPOINT, postData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status !== 200) {
+        toast.error("Upload failed. Please try again.");
+
+        return;
+      }
+
+      toast.success("Upload successful!");
+    } catch (error) {
+      toast.error("Error uploading data. Please try again.");
+    }
   }
 
   return (

@@ -15,12 +15,15 @@ function App() {
   async function handleLogin() {
     try {
       const data = await user.handleGoogleLogin();
+
       if (data.result !== "ok") {
         setError("Login failed. Please try again.");
         navigate("/login");
-      } else {
-        navigate(data.isUser ? "/logo-dashboard" : "/new-resource-form");
+
+        return;
       }
+
+      navigate(data.isUser ? "/logo-dashboard" : "/new-resource-form");
     } catch (err) {
       setError(err.message);
       navigate("/login");
