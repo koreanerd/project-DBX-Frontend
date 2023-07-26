@@ -6,6 +6,7 @@ import UserContext from "../contexts/UserContext";
 import Header from "./components/Header";
 import Login from "./components/Login";
 import ResourceForm from "./components/ResourceForm";
+import ResourceList from "./components/ResourceList";
 
 function App() {
   const user = useUser();
@@ -41,7 +42,7 @@ function App() {
               element={<Login handleGoogleLogin={handleLogin} error={error} />}
             />
             <Route path="/new-resource-form" element={<ResourceForm />} />
-            <Route path="/logo-dashboard" />
+            <Route path="/resource-list-logo" element={<ResourceList />} />
           </Routes>
         </main>
         <Toaster />
