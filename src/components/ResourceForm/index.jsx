@@ -79,7 +79,10 @@ function ResourceForm() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-
+    const MODES = ["default", "darkmode", "1.5x", "2x", "3x", "4x"];
+    const BASE_URL = `${import.meta.env.VITE_SERVER_URL}/categories/${
+      import.meta.env.VITE_CATEGORY_ID
+    }`;
     const date = new Date().toString();
     const postData = {
       name: `${requiredLogoDetails.name}.svg`,
@@ -91,8 +94,6 @@ function ResourceForm() {
       files: [],
     };
 
-    const modes = ["default", "darkmode", "1.5x", "2x", "3x", "4x"];
-
     if (requiredLogoDetails.default) {
       const defaultLogoSvg = await readFileAsText(requiredLogoDetails.default);
 
@@ -102,7 +103,7 @@ function ResourceForm() {
       });
     }
 
-    const filePromises = modes.map(async mode => {
+    const filePromises = MODES.map(async mode => {
       const file = logoImagesByMode[mode];
 
       if (file) {
@@ -122,17 +123,11 @@ function ResourceForm() {
     postData.files = [...postData.files, ...fileDetails.filter(Boolean)];
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/categories/${
-          import.meta.env.VITE_CATEGORY_ID
-        }/resource`,
-        postData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/resource`, postData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.status !== 201) {
         toast.error("Upload failed. Please try again.");
