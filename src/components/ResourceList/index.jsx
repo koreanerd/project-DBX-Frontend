@@ -1,16 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 import CategoryBar from "./CategoryBar";
 import ImageGrid from "./ImageGrid";
 import ControlPanel from "./ControlPanel";
 
 function ResourceList() {
-  const [selectedCategory, setSelectedCategory] = useState("Brand Logo"); // Default category
+  const [selectedCategory, setSelectedCategory] = useState("Brand Logo");
+  const [resourcesData, setResourcesData] = useState({});
 
-  const resourcesData = {
-    "Brand Logo": Array(16).fill("../../../asset/Asset_logo.svg"),
-    "Key Image": Array(16).fill("../../../asset/Asset_key.svg"),
-    Icon: Array(16).fill("../../../asset/Asset_icon.svg"),
-  };
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/categories/${
+          import.meta.env.VITE_CATEGORY_ID
+        }`
+      );
+      const categoryData = response.data.categoryList.reduce((acc, item) => {
+        acc["Brand Logo"] = acc["Brand Logo"] || [];
+        acc["Brand Logo"].push(item.svgUrl);
+
+        return acc;
+      }, {});
+
+      setResourcesData(categoryData);
+    } catch (error) {
+      toast.error(`Error fetching data: ${error}`);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   function handleCategoryClick(category) {
     setSelectedCategory(category);
@@ -23,7 +44,7 @@ function ResourceList() {
         activeCategory={selectedCategory}
         onChangeCategory={handleCategoryClick}
       />
-      <ImageGrid category={resourcesData} resourceData={selectedCategory} />
+      <ImageGrid category={resourcesData[selectedCategory] || []} />
       <ControlPanel />
     </div>
   );

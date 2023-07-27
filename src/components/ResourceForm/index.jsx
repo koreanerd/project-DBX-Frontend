@@ -2,11 +2,13 @@ import { useState, useContext } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import FileInput from "./FileInput";
 import UserContext from "../../../contexts/UserContext";
 
 function ResourceForm() {
   const user = useContext(UserContext);
+  const navigate = useNavigate();
   const { userEmail } = user;
   const [previewSource, setPreviewSource] = useState(null);
   const [requiredLogoDetails, setRequiredLogoDetails] = useState({
@@ -68,6 +70,7 @@ function ResourceForm() {
   function readFileAsText(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
+
       reader.onload = event => resolve(event.target.result);
       reader.onerror = error => reject(error);
       reader.readAsText(file);
@@ -78,10 +81,8 @@ function ResourceForm() {
     event.preventDefault();
 
     const date = new Date().toString();
-
     const postData = {
       name: `${requiredLogoDetails.name}.svg`,
-      categoryId: "null",
       detail: {
         version: "1.0.0",
         uploadDate: date,
@@ -94,11 +95,10 @@ function ResourceForm() {
 
     if (requiredLogoDetails.default) {
       const defaultLogoSvg = await readFileAsText(requiredLogoDetails.default);
+
       postData.files.push({
-        file: {
-          fileName: "default",
-          svgFile: defaultLogoSvg,
-        },
+        fileName: "default",
+        svgFile: defaultLogoSvg,
       });
     }
 
@@ -108,12 +108,10 @@ function ResourceForm() {
       if (file) {
         const svg = await readFileAsText(file);
 
-        return {
-          file: {
-            fileName: mode,
-            svgFile: svg,
-          },
-        };
+        postData.files.push({
+          fileName: mode,
+          svgFile: svg,
+        });
       }
 
       return null;
@@ -124,20 +122,26 @@ function ResourceForm() {
     postData.files = [...postData.files, ...fileDetails.filter(Boolean)];
 
     try {
-      const API_ENDPOINT = "http://localhost:3000/temp/endpoint/address";
-      const response = await axios.post(API_ENDPOINT, postData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/categories/${
+          import.meta.env.VITE_CATEGORY_ID
+        }/resource`,
+        postData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (response.status !== 200) {
+      if (response.status !== 201) {
         toast.error("Upload failed. Please try again.");
 
         return;
       }
 
       toast.success("Upload successful!");
+      navigate("/resource-list-logo");
     } catch (error) {
       toast.error("Error uploading data. Please try again.");
     }

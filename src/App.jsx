@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+// import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import useUser from "../hooks/useUser";
 import UserContext from "../contexts/UserContext";
@@ -10,26 +10,6 @@ import ResourceList from "./components/ResourceList";
 
 function App() {
   const user = useUser();
-  const navigate = useNavigate();
-  const [error, setError] = useState(null);
-
-  async function handleLogin() {
-    try {
-      const data = await user.handleGoogleLogin();
-
-      if (data.result !== "ok") {
-        setError("Login failed. Please try again.");
-        navigate("/login");
-
-        return;
-      }
-
-      navigate(data.isUser ? "/logo-dashboard" : "/new-resource-form");
-    } catch (err) {
-      setError(err.message);
-      navigate("/login");
-    }
-  }
 
   return (
     <UserContext.Provider value={user}>
@@ -37,10 +17,7 @@ function App() {
         <Header />
         <main className="flex items-center justify-center h-screen">
           <Routes>
-            <Route
-              path="/login"
-              element={<Login handleGoogleLogin={handleLogin} error={error} />}
-            />
+            <Route path="/login" element={<Login />} />
             <Route path="/new-resource-form" element={<ResourceForm />} />
             <Route path="/resource-list-logo" element={<ResourceList />} />
           </Routes>
