@@ -28,7 +28,9 @@ function ResourceList() {
 
       setResourcesData(categoryData);
     } catch (error) {
-      toast.error(`Error fetching data: ${error}`);
+      toast.error(
+        "There was an issue loading your data. Please try again later."
+      );
     }
   }
 
