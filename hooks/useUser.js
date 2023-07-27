@@ -20,9 +20,10 @@ export default function useUser() {
       setUserData(data._tokenResponse);
 
       const response = await axios.post(
-        "http://localhost:3000/login",
+        `${import.meta.env.VITE_SERVER_URL}/login`,
         data._tokenResponse
       );
+
       return response.data;
     } catch (err) {
       setUserData(null);
