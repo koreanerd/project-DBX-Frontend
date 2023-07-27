@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import CategoryBar from "./CategoryBar";
 import ImageGrid from "./ImageGrid";
 import ControlPanel from "./ControlPanel";
+import UserContext from "../../../contexts/UserContext";
 
 function ResourceList() {
+  const user = useContext(UserContext);
+  const { userEmail } = user;
   const [selectedCategory, setSelectedCategory] = useState("Brand Logo");
   const [resourcesData, setResourcesData] = useState({});
 
@@ -45,7 +48,7 @@ function ResourceList() {
         onChangeCategory={handleCategoryClick}
       />
       <ImageGrid category={resourcesData[selectedCategory] || []} />
-      <ControlPanel />
+      <ControlPanel email={userEmail} />
     </div>
   );
 }
