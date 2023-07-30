@@ -2,14 +2,23 @@ import { useState, useContext } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import FileInput from "./FileInput";
 import UserContext from "../../../contexts/UserContext";
+import { InitialResponseContext } from "../../../contexts/InitialResponseContext";
 
 function ResourceForm() {
   const user = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { category } = useParams();
   const { userEmail } = user;
+  const isInitialUser = location.state?.isInitialUser;
+  const { initialResponse } = useContext(InitialResponseContext);
+  const brandLogoCategory = initialResponse.find(
+    categories => categories.name === "BrandLogo"
+  );
+  const brandLogoCategoryId = brandLogoCategory ? brandLogoCategory._id : null;
   const [previewSource, setPreviewSource] = useState(null);
   const [requiredLogoDetails, setRequiredLogoDetails] = useState({
     name: "",
@@ -79,10 +88,11 @@ function ResourceForm() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+
     const MODES = ["default", "darkmode", "1.5x", "2x", "3x", "4x"];
-    const BASE_URL = `${import.meta.env.VITE_SERVER_URL}/categories/${
-      import.meta.env.VITE_CATEGORY_ID
-    }`;
+    const BASE_URL = isInitialUser
+      ? `${import.meta.env.VITE_SERVER_URL}/categories/${brandLogoCategoryId}`
+      : `${import.meta.env.VITE_SERVER_URL}/categories/${category}`;
     const date = new Date().toString();
     const postData = {
       name: `${requiredLogoDetails.name}.svg`,
@@ -102,11 +112,12 @@ function ResourceForm() {
         svgFile: defaultLogoSvg,
       });
     }
-
-    const filePromises = MODES.map(async mode => {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const mode of MODES) {
       const file = logoImagesByMode[mode];
 
       if (file) {
+        // eslint-disable-next-line no-await-in-loop
         const svg = await readFileAsText(file);
 
         postData.files.push({
@@ -114,13 +125,7 @@ function ResourceForm() {
           svgFile: svg,
         });
       }
-
-      return null;
-    });
-
-    const fileDetails = await Promise.all(filePromises);
-
-    postData.files = [...postData.files, ...fileDetails.filter(Boolean)];
+    }
 
     try {
       const response = await axios.post(`${BASE_URL}/resource`, postData, {
@@ -136,7 +141,7 @@ function ResourceForm() {
       }
 
       toast.success("Upload successful!");
-      navigate("/resource-list-logo");
+      navigate(`/resource-list/${brandLogoCategoryId}`);
     } catch (error) {
       toast.error("Error uploading data. Please try again.");
     }

@@ -1,88 +1,54 @@
-import { useState } from "react";
-import Modal from "react-modal";
-import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 // eslint-disable-next-line react/prop-types
-function ImageGrid({ category }) {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
-  const navigate = useNavigate();
+function ImageGrid({ svgUrl, data, onImageSelect }) {
+  const gridRef = useRef();
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
 
-  function openModal(img) {
-    setSelectedImage(img);
-    setModalIsOpen(true);
+  function handleOpenModal(img, id) {
+    setModalContent(img);
+    setShowModal(true);
+    onImageSelect(id);
   }
 
-  function closeModal() {
-    setModalIsOpen(false);
-    setSelectedImage(null);
-    setDarkMode(false);
-  }
-
-  function navigateToVersionPage() {
-    navigate("/resource-version");
-  }
-
-  function toggleDarkMode() {
-    setDarkMode(!darkMode);
+  function handleCloseModal() {
+    setShowModal(false);
   }
 
   return (
-    <div className="w-3/5 overflow-auto h-screen">
+    <div className="relative w-3/5 overflow-auto h-screen" ref={gridRef}>
+      {showModal &&
+        createPortal(
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="w-1/2 bg-stone-100 p-5 rounded-xl">
+              <button type="button" onClick={handleCloseModal}>
+                Close Modal
+              </button>
+              <img src={modalContent} alt="" />
+            </div>
+          </div>,
+          gridRef.current // Use the ref as the container for the portal
+        )}
       <div className="grid grid-cols-4 gap-4 mt-12 mr-12">
-        {/* eslint-disable-next-line react/prop-types */}
-        {category.map(img => {
-          const objectID = img.split("/")[3].replace(/"/g, "");
+        {/* eslint-disable-next-line react/prop-types, array-callback-return */}
+        {svgUrl.map((url, index) => {
+          // eslint-disable-next-line no-useless-escape
+          const key = url.match(/\"(.+?)\"/)[1];
 
           return (
-            <div
-              key={objectID}
-              role="button"
-              tabIndex={0}
-              onClick={() => openModal(img)}
-              onKeyDown={event => {
-                if (event.key === "Enter" || event.key === " ") {
-                  openModal(img);
-                }
-              }}
-              className="bg-stone-100 rounded-xl"
-            >
-              <img src={img} alt="" />
+            <div key={key} className="bg-stone-100 rounded-xl">
+              <img
+                src={url}
+                alt=""
+                // eslint-disable-next-line react/prop-types
+                onClick={() => handleOpenModal(url, data[index].id)}
+              />
             </div>
           );
         })}
       </div>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Image Modal"
-        className="w-1/4 mx-auto my-40 bg-stone-300"
-      >
-        {selectedImage && (
-          <div>
-            <img
-              src={selectedImage}
-              alt=""
-              className={darkMode ? "dark-version" : ""}
-            />
-            <button
-              type="button"
-              onClick={navigateToVersionPage}
-              className="border border-black"
-            >
-              Previous version &gt;
-            </button>
-            <button
-              type="button"
-              onClick={toggleDarkMode}
-              className="border border-black"
-            >
-              Switch to {darkMode ? "Normal" : "Dark"} Mode
-            </button>
-          </div>
-        )}
-      </Modal>
     </div>
   );
 }

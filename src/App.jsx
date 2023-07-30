@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import Login from "./components/Login";
 import ResourceForm from "./components/ResourceForm";
 import ResourceList from "./components/ResourceList";
+import { InitialResponseProvider } from "../contexts/InitialResponseContext";
 
 function App() {
   const user = useUser();
@@ -16,11 +17,16 @@ function App() {
       <div className="relative bg-gradient-to-b from-stone-300 via-stone-300 to-black">
         <Header />
         <main className="flex items-center justify-center h-screen">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/new-resource-form" element={<ResourceForm />} />
-            <Route path="/resource-list-logo" element={<ResourceList />} />
-          </Routes>
+          <InitialResponseProvider>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/new-resource-form" element={<ResourceForm />} />
+              <Route
+                path="/resource-list/:category"
+                element={<ResourceList />}
+              />
+            </Routes>
+          </InitialResponseProvider>
         </main>
         <Toaster />
       </div>
