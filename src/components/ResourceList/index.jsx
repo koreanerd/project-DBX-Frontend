@@ -1,4 +1,5 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import CategoryBar from "./CategoryBar";
@@ -8,49 +9,81 @@ import UserContext from "../../../contexts/UserContext";
 
 function ResourceList() {
   const user = useContext(UserContext);
-  const { userEmail } = user;
-  const [selectedCategory, setSelectedCategory] = useState("Brand Logo");
-  const [resourcesData, setResourcesData] = useState({});
+  const [categoriesId, setCategoriesId] = useState([]);
+  const { userEmail, isAdmin } = user;
+  const { category } = useParams();
+  const [resourcesUrl, setResourcesUrl] = useState([]);
+  const [resourcesData, setResourcesData] = useState([]);
+  const [selectedImageData, setSelectedImageData] = useState(null);
+  const navigate = useNavigate();
 
-  async function fetchData() {
+  async function getCategoriesId() {
+    const response = await axios.get(
+      `${import.meta.env.VITE_SERVER_URL}/categories`
+    );
+    setCategoriesId(response.data.categories);
+  }
+
+  useEffect(() => {
+    getCategoriesId();
+  }, []);
+
+  const fetchData = useCallback(async () => {
     try {
+      const categoryId = categoriesId.find(item => item.name === category)._id;
       const response = await axios.get(
-        `${import.meta.env.VITE_SERVER_URL}/categories/${
-          import.meta.env.VITE_CATEGORY_ID
-        }`
+        `${import.meta.env.VITE_SERVER_URL}/categories/${categoryId}`
       );
-      const categoryData = response.data.categoryList.reduce((acc, item) => {
-        acc["Brand Logo"] = acc["Brand Logo"] || [];
-        acc["Brand Logo"].push(item.svgUrl);
-
-        return acc;
-      }, {});
-
-      setResourcesData(categoryData);
+      setResourcesUrl(response.data.categoryList.map(item => item.svgUrl));
+      setResourcesData(response.data.categoryList);
     } catch (error) {
       toast.error(
         "There was an issue loading your data. Please try again later."
       );
     }
-  }
+  }, [category, categoriesId]);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (categoriesId) {
+      fetchData();
+    }
+  }, [fetchData, categoriesId]);
 
-  function handleCategoryClick(category) {
-    setSelectedCategory(category);
-  }
+  const handleCategoryChange = newCategory => {
+    navigate(`/resource-list/${newCategory}`);
+  };
+
+  const handleImageSelect = async imageId => {
+    try {
+      const categoryId = categoriesId.find(item => item.name === category)._id;
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_SERVER_URL
+        }/categories/${categoryId}/resources/${imageId}`
+      );
+      setSelectedImageData(response.data);
+    } catch (error) {
+      toast.error(
+        "There was an issue loading your data. Please try again later."
+      );
+    }
+  };
 
   return (
     <div className="flex w-screen h-screen">
       <CategoryBar
-        categories={Object.keys(resourcesData)}
-        activeCategory={selectedCategory}
-        onChangeCategory={handleCategoryClick}
+        categories={categoriesId ? categoriesId.map(item => item.name) : []}
+        activeCategory={category}
+        onChangeCategory={handleCategoryChange}
       />
-      <ImageGrid category={resourcesData[selectedCategory] || []} />
-      <ControlPanel email={userEmail} />
+      <ImageGrid
+        svgUrl={resourcesUrl}
+        data={resourcesData}
+        onImageSelect={handleImageSelect}
+        isAdmin={isAdmin}
+        category={category}
+      />
+      <ControlPanel email={userEmail} resourceData={selectedImageData} />
     </div>
   );
 }

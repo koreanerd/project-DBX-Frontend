@@ -11,6 +11,7 @@ import { auth } from "../config/firebase-config";
 export default function useUser() {
   const [userData, setUserData] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   async function handleGoogleLogin() {
     try {
@@ -23,6 +24,8 @@ export default function useUser() {
         `${import.meta.env.VITE_SERVER_URL}/login`,
         data._tokenResponse
       );
+
+      setIsAdmin(response.data.isAdmin);
 
       return response.data;
     } catch (err) {
@@ -49,5 +52,5 @@ export default function useUser() {
     });
   }, []);
 
-  return { userData, userEmail, handleGoogleLogin };
+  return { userData, userEmail, isAdmin, handleGoogleLogin };
 }
