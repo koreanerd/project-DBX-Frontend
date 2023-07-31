@@ -6,23 +6,31 @@ import CategoryBar from "./CategoryBar";
 import ImageGrid from "./ImageGrid";
 import ControlPanel from "./ControlPanel";
 import UserContext from "../../../contexts/UserContext";
-import { InitialResponseContext } from "../../../contexts/InitialResponseContext";
 
 function ResourceList() {
   const user = useContext(UserContext);
-  const { initialResponse } = useContext(InitialResponseContext);
-  const { userEmail } = user;
+  const [categoriesId, setCategoriesId] = useState([]);
+  const { userEmail, isAdmin } = user;
   const { category } = useParams();
   const [resourcesUrl, setResourcesUrl] = useState([]);
   const [resourcesData, setResourcesData] = useState([]);
   const [selectedImageData, setSelectedImageData] = useState(null);
   const navigate = useNavigate();
 
+  async function getCategoriesId() {
+    const response = await axios.get(
+      `${import.meta.env.VITE_SERVER_URL}/categories`
+    );
+    setCategoriesId(response.data.categories);
+  }
+
+  useEffect(() => {
+    getCategoriesId();
+  }, []);
+
   const fetchData = useCallback(async () => {
     try {
-      const categoryId = initialResponse.find(
-        item => item.name === category
-      )._id;
+      const categoryId = categoriesId.find(item => item.name === category)._id;
       const response = await axios.get(
         `${import.meta.env.VITE_SERVER_URL}/categories/${categoryId}`
       );
@@ -33,13 +41,13 @@ function ResourceList() {
         "There was an issue loading your data. Please try again later."
       );
     }
-  }, [category, initialResponse]);
+  }, [category, categoriesId]);
 
   useEffect(() => {
-    if (initialResponse) {
+    if (categoriesId) {
       fetchData();
     }
-  }, [fetchData, initialResponse]);
+  }, [fetchData, categoriesId]);
 
   const handleCategoryChange = newCategory => {
     navigate(`/resource-list/${newCategory}`);
@@ -47,9 +55,7 @@ function ResourceList() {
 
   const handleImageSelect = async imageId => {
     try {
-      const categoryId = initialResponse.find(
-        item => item.name === category
-      )._id;
+      const categoryId = categoriesId.find(item => item.name === category)._id;
       const response = await axios.get(
         `${
           import.meta.env.VITE_SERVER_URL
@@ -66,9 +72,7 @@ function ResourceList() {
   return (
     <div className="flex w-screen h-screen">
       <CategoryBar
-        categories={
-          initialResponse ? initialResponse.map(item => item.name) : []
-        }
+        categories={categoriesId ? categoriesId.map(item => item.name) : []}
         activeCategory={category}
         onChangeCategory={handleCategoryChange}
       />
@@ -76,6 +80,8 @@ function ResourceList() {
         svgUrl={resourcesUrl}
         data={resourcesData}
         onImageSelect={handleImageSelect}
+        isAdmin={isAdmin}
+        category={category}
       />
       <ControlPanel email={userEmail} resourceData={selectedImageData} />
     </div>

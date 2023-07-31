@@ -2,11 +2,11 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import useUser from "../../../hooks/useUser";
+import UserContext from "../../../contexts/UserContext";
 import { InitialResponseContext } from "../../../contexts/InitialResponseContext";
 
 function Login() {
-  const user = useUser();
+  const { handleGoogleLogin } = useContext(UserContext);
   const navigate = useNavigate();
   const { initialResponse, setInitialResponse } = useContext(
     InitialResponseContext
@@ -14,7 +14,7 @@ function Login() {
 
   async function handleLogin() {
     try {
-      const data = await user.handleGoogleLogin();
+      const data = await handleGoogleLogin();
 
       if (data?.isInitialUser) {
         const response = await axios.post(
