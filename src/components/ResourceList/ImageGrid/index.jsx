@@ -29,7 +29,7 @@ function ImageGrid({ svgUrl, data, onImageSelect }) {
               <img src={modalContent} alt="" />
             </div>
           </div>,
-          gridRef.current // Use the ref as the container for the portal
+          gridRef.current
         )}
       <div className="grid grid-cols-4 gap-4 mt-12 mr-12">
         {/* eslint-disable-next-line react/prop-types, array-callback-return */}
