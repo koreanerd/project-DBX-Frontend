@@ -2,7 +2,7 @@ import AWS from "aws-sdk";
 import { toast } from "react-hot-toast";
 import CopyLinkButton from "./CopyLinkButton";
 
-// eslint-disable-next-line react/prop-types
+//eslint-disable-next-line react/prop-types
 function ControlPanel({ email, resourceData, categoryId, resourceId }) {
   const providedUrl = `${
     import.meta.env.VITE_SERVER_URL
@@ -23,7 +23,7 @@ function ControlPanel({ email, resourceData, categoryId, resourceId }) {
       </div>
     );
   }
-  // eslint-disable-next-line react/prop-types
+  //eslint-disable-next-line react/prop-types
   const { categoryName, authorName, resourceName, uploadDate, version, files } =
     resourceData;
 
@@ -53,7 +53,7 @@ function ControlPanel({ email, resourceData, categoryId, resourceId }) {
           bubbles: true,
           cancelable: true,
           view: window,
-        })
+        }),
       );
       document.body.removeChild(link);
     }
@@ -94,8 +94,8 @@ function ControlPanel({ email, resourceData, categoryId, resourceId }) {
         </div>
         <h3 className="text-lg font-bold mt-4">Files:</h3>
         <ul>
-          {/* eslint-disable-next-line react/prop-types */}
-          {files.map(file => (
+          {/*eslint-disable-next-line react/prop-types */}
+          {files.map((file) => (
             <li key={file._id} className=" p-3 bg-stone-100 mb-5 rounded-xl">
               <h4 className="mb-3 px-3 bg-stone-400 inline-block text-stone-100 text-md font-semibold rounded-full">{`${file.fileName}`}</h4>
               <div className="flex">

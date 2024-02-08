@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import UserContext from "../../../contexts/UserContext";
+import UserContext from "@/contexts/UserContext";
 
 function ResourceVersionList() {
   const user = useContext(UserContext);
@@ -9,14 +9,16 @@ function ResourceVersionList() {
   const location = useLocation();
   const { categoryName } = location.state;
   const { resourceId } = location.state;
-  const categoryId = categoriesId.find(item => item.name === categoryName)._id;
+  const categoryId = categoriesId.find(
+    (item) => item.name === categoryName,
+  )._id;
   const [versionData, setVersionData] = useState([]);
 
   async function fetchData() {
     const response = await axios.get(
       `${
         import.meta.env.VITE_SERVER_URL
-      }/categories/${categoryId}/resources/${resourceId}/versions`
+      }/categories/${categoryId}/resources/${resourceId}/versions`,
     );
 
     setVersionData([...response.data]);
@@ -30,7 +32,6 @@ function ResourceVersionList() {
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -40,7 +41,7 @@ function ResourceVersionList() {
           const currentVersion = version.detail.version;
           const previousVersion = versionData[index + 1]
             ? versionData[index + 1].detail.version
-            : "N/A"; // If it's the last version, we set it to N/A
+            : "N/A";
 
           return (
             <div key={version._id}>
@@ -83,7 +84,7 @@ function ResourceVersionList() {
                           <div>
                             <p className="">
                               {`Updated on ${formatDate(
-                                version.detail.uploadDate
+                                version.detail.uploadDate,
                               )}`}
                             </p>
                           </div>

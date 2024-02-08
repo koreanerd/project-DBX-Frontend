@@ -2,9 +2,9 @@ import { useRef, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import axios from "axios";
-import UserContext from "../../../../contexts/UserContext";
+import UserContext from "@/contexts/UserContext";
 
-// eslint-disable-next-line react/prop-types
+//eslint-disable-next-line react/prop-types
 function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
   const user = useContext(UserContext);
   const navigate = useNavigate();
@@ -13,7 +13,9 @@ function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [currentId, setCurrentId] = useState(null);
-  const categoryId = categoriesId.find(item => item.name === categoryName)?._id;
+  const categoryId = categoriesId.find(
+    (item) => item.name === categoryName,
+  )?._id;
 
   function handleOpenModal(img, id) {
     setModalContent(img);
@@ -49,7 +51,7 @@ function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
     const response = await axios.delete(
       `${
         import.meta.env.VITE_SERVER_URL
-      }/categories/${categoryId}/resources/${id}`
+      }/categories/${categoryId}/resources/${id}`,
     );
 
     if (response.data.result === "OK") {
@@ -74,7 +76,7 @@ function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
               <button
                 type="button"
                 onClick={() =>
-                  // eslint-disable-next-line react/prop-types
+                  //eslint-disable-next-line react/prop-types
                   navigateToResourceVersions()
                 }
                 className="absolute right-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
@@ -84,12 +86,12 @@ function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
               <img src={modalContent} alt="" />
             </div>
           </div>,
-          gridRef.current
+          gridRef.current,
         )}
       <div className="grid grid-cols-4 gap-4">
-        {/* eslint-disable-next-line react/prop-types, array-callback-return */}
+        {/*eslint-disable-next-line react/prop-types, array-callback-return */}
         {svgUrl.map((url, index) => {
-          // eslint-disable-next-line no-useless-escape
+          //eslint-disable-next-line no-useless-escape
           const key = url.match(/\"(.+?)\"/)[1];
 
           return (
@@ -97,7 +99,7 @@ function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
               <img
                 src={url}
                 alt=""
-                // eslint-disable-next-line react/prop-types
+                //eslint-disable-next-line react/prop-types
                 onClick={() => handleOpenModal(url, data[index].id)}
               />
               {isAdmin && (
@@ -105,7 +107,7 @@ function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
                   <button
                     type="button"
                     onClick={() =>
-                      // eslint-disable-next-line react/prop-types
+                      //eslint-disable-next-line react/prop-types
                       navigateToResourceVersionForm(data[index].id)
                     }
                     className="px-2 py-0.5 rounded-md bg-stone-800"
@@ -115,7 +117,7 @@ function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
                   <button
                     type="button"
                     onClick={() =>
-                      // eslint-disable-next-line react/prop-types
+                      //eslint-disable-next-line react/prop-types
                       resourceDelete(data[index].id)
                     }
                     className="px-2 py-0.5 rounded-md bg-stone-800"
