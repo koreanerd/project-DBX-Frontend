@@ -1,7 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-
 import { toast } from "react-hot-toast";
 import React, { useRef, useEffect } from "react";
 import ClipboardJS from "clipboard";
@@ -15,11 +11,11 @@ function CopyLinkButton({ linkToCopy }) {
       text: () => linkToCopy,
     });
 
-    clipboard.on("success", e => {
+    clipboard.on("success", () => {
       toast.success("Copy success!");
     });
 
-    clipboard.on("error", e => {
+    clipboard.on("error", () => {
       toast.error("Copy failed...");
     });
 

@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
-// eslint-disable-next-line react/prop-types
-function FileInput({ mode, handleFileChange, logoImageByMode }) {
+//eslint-disable-next-line react/prop-types
+function FileUploadForm({ mode, handleFileChange, logoImageByMode }) {
   const fileInputRef = useRef(null);
 
   return (
@@ -12,7 +12,7 @@ function FileInput({ mode, handleFileChange, logoImageByMode }) {
           type="file"
           style={{ display: "none" }}
           ref={fileInputRef}
-          onChange={event => {
+          onChange={(event) => {
             handleFileChange(event, mode);
           }}
         />
@@ -21,11 +21,11 @@ function FileInput({ mode, handleFileChange, logoImageByMode }) {
             logoImageByMode ? `text-xs text-black` : `text-xs text-stone-400`
           }`}
         >
-          {/* eslint-disable react/prop-types */}
+          {/*eslint-disable react/prop-types */}
           {logoImageByMode
             ? logoImageByMode.name
             : "No files have been selected yet. *Please only upload SVG files!"}
-          {/* eslint-enable react/prop-types */}
+          {/*eslint-enable react/prop-types */}
         </div>
         <button
           type="button"
@@ -39,4 +39,4 @@ function FileInput({ mode, handleFileChange, logoImageByMode }) {
   );
 }
 
-export default FileInput;
+export default FileUploadForm;

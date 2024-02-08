@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import { useState, useEffect, useMemo } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -9,16 +8,16 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import axios from "axios";
-import UserContext from "../contexts/UserContext";
-import InitialContext from "../contexts/InitialResponseContext";
-import Header from "./components/Header";
-import Login from "./components/Login";
-import InitialResourceForm from "./components/ResourceForms/InitialResourceForm";
-import ResourceList from "./components/ResourceList";
-import { auth } from "../config/firebase-config";
-import ResourceVersionForm from "./components/ResourceForms/ResourceVersionForm";
-import ResourceForm from "./components/ResourceForms/ResourceForm";
-import ResourceVersionList from "./components/ResourceVersionList";
+import UserContext from "@/contexts/UserContext";
+import InitialContext from "@/contexts/InitialResponseContext";
+import Header from "@/views/header/Header";
+import Login from "@/views/landing-page/Login";
+import InitialResourceForm from "@/views/forms/InitialResourceForm";
+import ResourceList from "@/views/resource-list/ResourceList";
+import { auth } from "@/config/firebase-config";
+import ResourceVersionForm from "@/views/forms/ResourceVersionForm";
+import ResourceForm from "@/views/forms/ResourceForm";
+import ResourceVersionList from "@/views/resource-version-list/ResourceVersionList";
 
 function App() {
   const [userData, setUserData] = useState(null);
@@ -37,7 +36,7 @@ function App() {
     const response = await axios.post(
       `${import.meta.env.VITE_SERVER_URL}/login`,
       { idToken: token, email, login: false },
-      { headers: { "Content-Type": "application/json" } }
+      { headers: { "Content-Type": "application/json" } },
     );
 
     setIsAdmin(response.data.isAdmin);
@@ -53,7 +52,7 @@ function App() {
 
       const response = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}/login`,
-        { email: userEmail, idToken: data._tokenResponse.idToken, login: true }
+        { email: userEmail, idToken: data._tokenResponse.idToken, login: true },
       );
 
       setIsAdmin(response.data.isAdmin);
@@ -74,7 +73,7 @@ function App() {
   }
 
   useEffect(() => {
-    onAuthStateChanged(authenticate, user => {
+    onAuthStateChanged(authenticate, (user) => {
       if (user) {
         setUserEmail(user.email);
         const token = user.accessToken;
@@ -84,7 +83,6 @@ function App() {
         }
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value = useMemo(
@@ -95,15 +93,14 @@ function App() {
       categoriesId,
       handleGoogleLogin,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [userData, userEmail, isAdmin, categoriesId]
+    [userData, userEmail, isAdmin, categoriesId],
   );
 
   const initialValue = useMemo(
     () => ({
       initialResponse,
     }),
-    [initialResponse]
+    [initialResponse],
   );
 
   return (
@@ -119,7 +116,7 @@ function App() {
               />
               <Route path="/new-resource-form" element={<ResourceForm />} />
               <Route
-                path="/login"
+                path="/"
                 element={
                   <Login
                     setInitialResponse={setInitialResponse}

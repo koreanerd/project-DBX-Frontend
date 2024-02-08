@@ -3,8 +3,8 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import FileInput from "../FileInput";
-import UserContext from "../../../../contexts/UserContext";
+import FileUploadForm from "@/components/FileUploadForm";
+import UserContext from "@/contexts/UserContext";
 
 function ResourceForm() {
   const user = useContext(UserContext);
@@ -12,7 +12,9 @@ function ResourceForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const { categoryName } = location.state;
-  const categoryId = categoriesId.find(item => item.name === categoryName)._id;
+  const categoryId = categoriesId.find(
+    (item) => item.name === categoryName,
+  )._id;
   const [previewSource, setPreviewSource] = useState(null);
   const [requiredLogoDetails, setRequiredLogoDetails] = useState({
     name: "",
@@ -31,7 +33,7 @@ function ResourceForm() {
   function handleInputChange(event) {
     const { name, value } = event.target;
 
-    setRequiredLogoDetails(prevData => ({ ...prevData, [name]: value }));
+    setRequiredLogoDetails((prevData) => ({ ...prevData, [name]: value }));
   }
 
   function onDrop(acceptedFiles) {
@@ -50,7 +52,7 @@ function ResourceForm() {
       setPreviewSource(reader.result);
     };
 
-    setRequiredLogoDetails(prevFiles => ({ ...prevFiles, default: file }));
+    setRequiredLogoDetails((prevFiles) => ({ ...prevFiles, default: file }));
   }
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
@@ -68,15 +70,15 @@ function ResourceForm() {
       return;
     }
 
-    setLogoImagesByMode(prevFiles => ({ ...prevFiles, [mode]: file }));
+    setLogoImagesByMode((prevFiles) => ({ ...prevFiles, [mode]: file }));
   }
 
   function readFileAsText(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
-      reader.onload = event => resolve(event.target.result);
-      reader.onerror = error => reject(error);
+      reader.onload = (event) => resolve(event.target.result);
+      reader.onerror = (error) => reject(error);
       reader.readAsText(file);
     });
   }
@@ -105,12 +107,12 @@ function ResourceForm() {
         svgFile: defaultLogoSvg,
       });
     }
-    // eslint-disable-next-line no-restricted-syntax
+    //eslint-disable-next-line no-restricted-syntax
     for (const mode of MODES) {
       const file = logoImagesByMode[mode];
 
       if (file) {
-        // eslint-disable-next-line no-await-in-loop
+        //eslint-disable-next-line no-await-in-loop
         const svg = await readFileAsText(file);
 
         postData.files.push({
@@ -128,7 +130,7 @@ function ResourceForm() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (response.status !== 201) {
@@ -150,7 +152,7 @@ function ResourceForm() {
         <div className="grid grid-cols-3 h-fit">
           <div>
             <h2 className="text-lg font-bold">{categoryName}</h2>
-            {/* eslint-disable react/jsx-props-no-spreading */}
+            {/*eslint-disable react/jsx-props-no-spreading */}
             <div
               {...getRootProps()}
               className="border border-stone-800 rounded-md w-60 h-60"
@@ -164,7 +166,7 @@ function ResourceForm() {
                 />
               )}
             </div>
-            {/* eslint-enable react/jsx-props-no-spreading */}
+            {/*eslint-enable react/jsx-props-no-spreading */}
             <p className="text-xs text-stone-400">
               * Please set your brand signature logo.
             </p>
@@ -193,11 +195,11 @@ function ResourceForm() {
         </div>
         <div className="mt-10">
           {categoryName === "BrandLogo"
-            ? Object.keys(logoImagesByMode).map(mode => (
-                <FileInput
+            ? Object.keys(logoImagesByMode).map((mode) => (
+                <FileUploadForm
                   key={mode}
                   mode={mode}
-                  handleFileChange={event => handleFileChange(event, mode)}
+                  handleFileChange={(event) => handleFileChange(event, mode)}
                   logoImageByMode={logoImagesByMode[mode]}
                 />
               ))
