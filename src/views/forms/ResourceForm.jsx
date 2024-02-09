@@ -124,7 +124,7 @@ function ResourceForm() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/categories/${categoryId}/resource`,
+        `${import.meta.env.VITE_BACKEND_URL}/categories/${categoryId}/resource`,
         postData,
         {
           headers: {

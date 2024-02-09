@@ -5,7 +5,7 @@ import CopyLinkButton from "./CopyLinkButton";
 //eslint-disable-next-line react/prop-types
 function ControlPanel({ email, resourceData, categoryId, resourceId }) {
   const providedUrl = `${
-    import.meta.env.VITE_SERVER_URL
+    import.meta.env.VITE_BACKEND_URL
   }/dbx/categories/${categoryId}/resources/${resourceId}`;
   const controlPanelHeader = (
     <div className="flex items-center bg-stone-100 h-16 text-stone-500">

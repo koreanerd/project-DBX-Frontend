@@ -50,7 +50,7 @@ function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
   async function resourceDelete(id) {
     const response = await axios.delete(
       `${
-        import.meta.env.VITE_SERVER_URL
+        import.meta.env.VITE_BACKEND_URL
       }/categories/${categoryId}/resources/${id}`,
     );
 

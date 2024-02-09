@@ -21,7 +21,7 @@ function ResourceList({ setCategoriesId }) {
 
   async function getCategoriesId() {
     const response = await axios.get(
-      `${import.meta.env.VITE_SERVER_URL}/categories`,
+      `${import.meta.env.VITE_BACKEND_URL}/categories`,
     );
     setCategoriesId(response.data.categories);
   }
@@ -36,7 +36,7 @@ function ResourceList({ setCategoriesId }) {
         (item) => item.name === category,
       )?._id;
       const response = await axios.get(
-        `${import.meta.env.VITE_SERVER_URL}/categories/${categoryId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/categories/${categoryId}`,
       );
       setResourcesUrl(response.data.categoryList.map((item) => item.svgUrl));
       setResourcesData(response.data.categoryList);
@@ -73,7 +73,7 @@ function ResourceList({ setCategoriesId }) {
       setSelectedCategoryId(categoryId);
       const response = await axios.get(
         `${
-          import.meta.env.VITE_SERVER_URL
+          import.meta.env.VITE_BACKEND_URL
         }/categories/${categoryId}/resources/${imageId}`,
       );
       setSelectedImageData(response.data);

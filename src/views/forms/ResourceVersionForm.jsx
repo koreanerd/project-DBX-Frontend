@@ -125,7 +125,7 @@ function ResourceVersionForm() {
     try {
       const response = await axios.post(
         `${
-          import.meta.env.VITE_SERVER_URL
+          import.meta.env.VITE_BACKEND_URL
         }/categories/${categoryId}/resources/${resourceId}/version`,
         postData,
         {

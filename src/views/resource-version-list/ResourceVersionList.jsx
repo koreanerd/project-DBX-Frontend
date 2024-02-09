@@ -17,7 +17,7 @@ function ResourceVersionList() {
   async function fetchData() {
     const response = await axios.get(
       `${
-        import.meta.env.VITE_SERVER_URL
+        import.meta.env.VITE_BACKEND_URL
       }/categories/${categoryId}/resources/${resourceId}/versions`,
     );
 

@@ -126,7 +126,7 @@ function InitialResourceForm() {
     try {
       const response = await axios.post(
         `${
-          import.meta.env.VITE_SERVER_URL
+          import.meta.env.VITE_BACKEND_URL
         }/categories/${brandLogoCategoryId}/resource`,
         postData,
         {
@@ -143,7 +143,7 @@ function InitialResourceForm() {
       }
 
       toast.success("Upload successful!");
-      navigate(`/resource-list/BrandLogo`);
+      navigate(`/resource-list/brand-logo`);
     } catch (error) {
       toast.error("Error uploading data. Please try again.");
     }
