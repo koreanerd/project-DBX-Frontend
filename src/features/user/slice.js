@@ -8,7 +8,8 @@ export const userSlice = createSlice({
     name: null,
     uid: null,
     token: null,
-    isAuthenticated: null,
+    isInitialUser: null,
+    categoryIds: [],
   },
   reducers: {
     setUser: (state, action) => {
@@ -17,7 +18,8 @@ export const userSlice = createSlice({
       state.name = action.payload.name;
       state.uid = action.payload.uid;
       state.token = action.payload.token;
-      state.isAuthenticated = true;
+      state.isInitialUser = action.payload.isInitialUser;
+      state.categoryIds = action.payload.categoryIds;
     },
     clearUser: (state) => {
       state.id = null;
@@ -25,7 +27,8 @@ export const userSlice = createSlice({
       state.name = null;
       state.uid = null;
       state.token = null;
-      state.isAuthenticated = false;
+      state.isInitialUser = null;
+      state.categoryIds = null;
     },
   },
 });

@@ -3,7 +3,7 @@ import app from "@/config/firebaseConfig";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "@/features/user/slice";
-import { getUserInformation } from "@/apis/user";
+import { getMyInformation } from "@/apis/user";
 
 const useAuthState = () => {
   const auth = getAuth(app);
@@ -18,7 +18,7 @@ const useAuthState = () => {
       }
 
       const token = await user.getIdToken();
-      const result = await getUserInformation(token);
+      const result = await getMyInformation(token);
 
       if (result.error) {
         console.error(result.error);
@@ -33,6 +33,8 @@ const useAuthState = () => {
           name: result.name,
           uid: result.uid,
           token: token,
+          isInitialUser: result.isInitialUser,
+          categoryIds: result.categoryIds,
         }),
       );
     });

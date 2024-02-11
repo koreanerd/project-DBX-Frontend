@@ -7,10 +7,11 @@ import { setUser, clearUser } from "@/features/user/slice";
 
 export const handleSignIn = async (dispatch, navigate) => {
   const googleSignInResult = await signInWithGoogle();
-  console.log(googleSignInResult);
 
   if (googleSignInResult.error) {
     navigate("/error", { state: { error: googleSignInResult.error } });
+
+    return;
   }
 
   const authenticateResult = await authenticateUser(googleSignInResult.token);
@@ -28,8 +29,17 @@ export const handleSignIn = async (dispatch, navigate) => {
       name: authenticateResult.user.name,
       uid: authenticateResult.user.uid,
       token: googleSignInResult.token,
+      isInitialUser: authenticateResult.user.isInitialUser,
     }),
   );
+
+  if (authenticateResult.user.isInitialUser === true) {
+    navigate("/initial-resource-form", { state: { category: "Brand Logo" } });
+
+    return;
+  }
+
+  navigate("/resource-list/BrandLogo");
 };
 
 export const handleSignOut = async (dispatch, navigate) => {
