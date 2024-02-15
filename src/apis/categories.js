@@ -8,6 +8,8 @@ const API_PATHS = {
     `${API_BASE_URL}/api/v1/categories/${categoryId}/resources/${resourceId}`,
   downLoadResorceFile: (url) =>
     `${API_BASE_URL}/api/v1/categories/resources/versions/files/download?url=${encodeURIComponent(url)}`,
+  getResourceVersion: (categoryId, resourceId) =>
+    `${API_BASE_URL}/api/v1/categories/${categoryId}/resources/${resourceId}/versions`,
 };
 
 export const getResourceList = async (token, categoryId) => {
@@ -48,4 +50,13 @@ export const downloadResourFile = async (token, url) => {
     },
     "download",
   );
+};
+
+export const getResourceVersion = async (token, categoryId, resourceId) => {
+  return await callApi(API_PATHS.getResourceVersion(categoryId, resourceId), {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };

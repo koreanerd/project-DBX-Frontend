@@ -1,15 +1,14 @@
 import PropTypes from "prop-types";
 import { useRef, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 import useSelectResource from "@/hooks/useSelectResource";
-import { goToRoute } from "@/utils/navigation";
 import toast from "react-hot-toast";
 import { deleteResourceData } from "@/apis/categories";
+import NavigateButton from "@/components/buttons/navigateButton";
 
 function ImageGrid({ list, data }) {
-  const navigate = useNavigate();
   const { currentCategoryPath } = useParams();
   const token = useSelector((state) => state.user.token);
   const categoryIds = useSelector((state) => state.user.categoryIds);
@@ -52,6 +51,7 @@ function ImageGrid({ list, data }) {
     versionList: {
       path: "/resource-version-list",
       state: (currentId) => ({
+        categoryId,
         resourceId: currentId,
         currentCategoryPath,
       }),
@@ -88,19 +88,14 @@ function ImageGrid({ list, data }) {
                 Close
               </button>
 
-              <button
-                type="button"
-                onClick={() =>
-                  goToRoute(
-                    navigate,
-                    locationData.versionList.path,
-                    locationData.versionList.state,
-                  )
+              <NavigateButton
+                path={locationData.versionList.path}
+                state={locationData.versionList.state(currentId)}
+                title={"Previous version"}
+                className={
+                  "absolute right-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
                 }
-                className="absolute right-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
-              >
-                Previous version &gt;
-              </button>
+              />
               <img src={modalContent} alt="" />
             </div>
           </div>,
@@ -117,19 +112,13 @@ function ImageGrid({ list, data }) {
               />
 
               <div className="absolute flex justify-between left-0 right-0 bottom-0 w-4/6 m-auto text-xs pb-2 text-stone-100 font-normal">
-                <button
-                  type="button"
-                  onClick={() =>
-                    goToRoute(
-                      navigate,
-                      locationData.versionForm.path,
-                      locationData.versionForm.state(data[index].resourceId),
-                    )
-                  }
-                  className="px-2 py-0.5 rounded-md bg-stone-800"
-                >
-                  Update
-                </button>
+                <NavigateButton
+                  path={locationData.versionForm.path}
+                  state={locationData.versionForm.state(data[index].resourceId)}
+                  title={"Update"}
+                  className={"px-2 py-0.5 rounded-md bg-stone-800"}
+                />
+
                 <button
                   type="button"
                   onClick={() => deleteResource(data[index].resourceId)}
@@ -143,19 +132,14 @@ function ImageGrid({ list, data }) {
         })}
         <div className="relative bg-stone-100 rounded-xl">
           <img src="/asset/blank_square.svg" alt="" />
-          <button
-            type="button"
-            onClick={() =>
-              goToRoute(
-                navigate,
-                locationData.resourceForm.path,
-                locationData.resourceForm.state(currentId),
-              )
+          <NavigateButton
+            path={locationData.resourceForm.path}
+            state={locationData.resourceForm.state}
+            title={"+"}
+            className={
+              "absolute left-0 right-0 top-0 bottom-0 w-4/5 h-4/5 m-auto bg-white backdrop-filter rounded-xl p-1 text-5xl font-light text-stone-700 transform transition duration-500 hover:scale-105"
             }
-            className="absolute left-0 right-0 top-0 bottom-0 w-4/5 h-4/5 m-auto bg-white backdrop-filter rounded-xl p-1 text-5xl font-light text-stone-700 transform transition duration-500 hover:scale-105"
-          >
-            +
-          </button>
+          />
         </div>
       </div>
     </div>

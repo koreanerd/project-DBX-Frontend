@@ -4,19 +4,19 @@ export const resourceInfoSlice = createSlice({
   name: "resource",
   initialState: {
     selectedResourceData: {},
-    selectedResourceCategoryId: null,
+    selectedResourceCategoryId: "",
     selectedResourceId: null,
   },
   reducers: {
     setResourceInfo: (state, action) => {
       state.selectedResourceData = action.payload.selectedResourceData || {};
       state.selectedResourceCategoryId =
-        action.payload.selectedResourceCategoryId;
+        action.payload.selectedResourceCategoryId || "";
       state.selectedResourceId = action.payload.selectedResourceId;
     },
     clearResourceInfo: (state) => {
       state.selectedResourceData = {};
-      state.selectedResourceCategoryId = null;
+      state.selectedResourceCategoryId = "";
       state.selectedResourceId = null;
     },
   },
