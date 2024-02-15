@@ -3,13 +3,15 @@ import { useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import useSelectResource from "@/hooks/useSelectResource";
 import { goToRoute } from "@/utils/navigation";
+import toast from "react-hot-toast";
+import { deleteResourceData } from "@/apis/categories";
 
-function ImageGrid({ list, data, fetchData }) {
+function ImageGrid({ list, data }) {
   const navigate = useNavigate();
   const { currentCategoryPath } = useParams();
+  const token = useSelector((state) => state.user.token);
   const categoryIds = useSelector((state) => state.user.categoryIds);
   const categoryId = categoryIds.find(
     (category) => category.name === currentCategoryPath,
@@ -56,17 +58,21 @@ function ImageGrid({ list, data, fetchData }) {
     },
   };
 
-  async function resourceDelete(id) {
-    const response = await axios.delete(
-      `${
-        import.meta.env.VITE_BACKEND_URL
-      }/categories/${categoryId}/resources/${id}`,
+  const deleteResource = async (resourceId) => {
+    const requestResult = await deleteResourceData(
+      token,
+      categoryId,
+      resourceId,
     );
 
-    if (response.data.result === "OK") {
-      fetchData();
+    if (requestResult.error) {
+      toast.error(requestResult.error);
+
+      return;
     }
-  }
+
+    toast.success(requestResult.message);
+  };
 
   return (
     <div className="relative w-3/5 p-10 overflow-auto h-screen" ref={gridRef}>
@@ -126,7 +132,7 @@ function ImageGrid({ list, data, fetchData }) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => resourceDelete(data[index].resourceId)}
+                  onClick={() => deleteResource(data[index].resourceId)}
                   className="px-2 py-0.5 rounded-md bg-stone-800"
                 >
                   Delete
@@ -159,7 +165,6 @@ function ImageGrid({ list, data, fetchData }) {
 ImageGrid.propTypes = {
   list: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
-  fetchData: PropTypes.func,
 };
 
 export default ImageGrid;

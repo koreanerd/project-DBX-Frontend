@@ -37,7 +37,7 @@ const useFetchResourceList = (categoryId) => {
     fetchData();
   }, [fetchData]);
 
-  return { fetchData, urlList, requestData, isLoading };
+  return { urlList, requestData, isLoading };
 };
 
 export default useFetchResourceList;
