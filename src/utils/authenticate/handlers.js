@@ -2,7 +2,7 @@ import {
   signInWithGoogle,
   signOutWithGoogle,
 } from "@/utils/authenticate/googleAuth";
-import { authenticateUser } from "@/apis/user";
+import { authenticateUser } from "@/apis/users";
 import { setUser, clearUser } from "@/features/user/slice";
 
 export const handleSignIn = async (dispatch, navigate) => {
@@ -30,6 +30,7 @@ export const handleSignIn = async (dispatch, navigate) => {
       uid: authenticateResult.user.uid,
       token: googleSignInResult.token,
       isInitialUser: authenticateResult.user.isInitialUser,
+      categoryIds: authenticateResult.user.categoryIds,
     }),
   );
 

@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/features/user/slice";
 import { toast } from "react-hot-toast";
 import { useDropzone } from "react-dropzone";
-import { initialRegistration } from "../apis/user";
+import { initialRegistration } from "@/apis/users";
 
 const useStagedFile = (token) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [previewFile, setPreviewFile] = useState(null);
   const [requiredDetails, setRequiredDetails] = useState({
     name: "",
@@ -78,7 +81,7 @@ const useStagedFile = (token) => {
 
     const date = new Date().toString();
     const requestData = {
-      name: `${requiredDetails.name}`,
+      name: requiredDetails.name,
       details: {
         version: "1.0.0",
         uploadDate: date,
@@ -92,22 +95,28 @@ const useStagedFile = (token) => {
 
       requestData.files.push({
         option: "default",
-        svgContent: svgContent,
+        svgContent,
       });
     }
 
-    Object.keys(logoByOptions).forEach(async (option) => {
+    const optionPromises = Object.keys(logoByOptions).map(async (option) => {
       const file = logoByOptions[option];
 
       if (file) {
-        const svgContent = await readFileAsText(requiredDetails.default);
+        const svgContent = await readFileAsText(file);
 
-        requestData.files.push({
-          option: option,
-          svgContent: svgContent,
-        });
+        return {
+          option,
+          svgContent,
+        };
       }
+
+      return null;
     });
+
+    const optionFiles = await Promise.all(optionPromises);
+
+    requestData.files.push(...optionFiles.filter((file) => file !== null));
 
     const requestResult = await initialRegistration(token, requestData);
 
@@ -116,6 +125,12 @@ const useStagedFile = (token) => {
 
       return;
     }
+
+    dispatch(
+      setUser({
+        categoryIds: requestResult.categoryIds,
+      }),
+    );
 
     toast.success("Upload successful!");
 

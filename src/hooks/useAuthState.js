@@ -3,7 +3,7 @@ import app from "@/config/firebaseConfig";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "@/features/user/slice";
-import { getMyInformation } from "@/apis/user";
+import { getMyInformation } from "@/apis/users";
 
 const useAuthState = () => {
   const auth = getAuth(app);

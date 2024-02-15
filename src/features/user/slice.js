@@ -19,7 +19,7 @@ export const userSlice = createSlice({
       state.uid = action.payload.uid;
       state.token = action.payload.token;
       state.isInitialUser = action.payload.isInitialUser;
-      state.categoryIds = action.payload.categoryIds;
+      state.categoryIds = action.payload.categoryIds || [];
     },
     clearUser: (state) => {
       state.id = null;
@@ -28,7 +28,7 @@ export const userSlice = createSlice({
       state.uid = null;
       state.token = null;
       state.isInitialUser = null;
-      state.categoryIds = null;
+      state.categoryIds = [];
     },
   },
 });

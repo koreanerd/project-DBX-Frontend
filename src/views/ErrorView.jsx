@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { goToHome } from "@/utils/navigation";
+import { goToRoute } from "@/utils/navigation";
 
 function ErrorView() {
   const location = useLocation();
@@ -10,7 +10,7 @@ function ErrorView() {
     <div>
       <h1>Error</h1>
       <p>{errorMessage}</p>
-      <button onClick={() => goToHome(navigate)}>Return to Home</button>
+      <button onClick={() => goToRoute(navigate, "/")}>Return to Home</button>
     </div>
   );
 }

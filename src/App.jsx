@@ -24,8 +24,8 @@ function App() {
         />
         <Route path="/new-resource-form" element={<ResourceForm />} />
         <Route
-          path="/resource-list/:category"
-          element={<ResourceList setCategoriesId={"temp"} />}
+          path="/resource-list/:currentCategoryPath"
+          element={<ResourceList />}
         />
         <Route
           path="/new-resource-version-form"
