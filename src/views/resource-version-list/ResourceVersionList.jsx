@@ -8,7 +8,6 @@ import NavigateButton from "@/components/buttons/navigateButton";
 function ResourceVersionList() {
   const location = useLocation();
   const { categoryId, resourceId, currentCategoryPath } = location.state;
-  console.log(currentCategoryPath);
   const token = useSelector((state) => state.user.token);
 
   const [isLoading, setIsLoading] = useState(true);

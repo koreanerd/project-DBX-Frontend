@@ -5,8 +5,9 @@ import { setUser } from "@/features/user/slice";
 import { toast } from "react-hot-toast";
 import { useDropzone } from "react-dropzone";
 import { initialRegistration } from "@/apis/users";
+import { updateResourceVersion } from "../apis/categories";
 
-const useStagedFile = (token) => {
+const useStagedFile = (token, flag, resourceId, currentCategoryPath) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [previewFile, setPreviewFile] = useState(null);
@@ -80,15 +81,25 @@ const useStagedFile = (token) => {
     event.preventDefault();
 
     const date = new Date().toString();
-    const requestData = {
-      name: requiredDetails.name,
-      details: {
-        version: "1.0.0",
-        uploadDate: date,
-        description: requiredDetails.description,
-      },
-      files: [],
-    };
+    const requestData =
+      flag === "update"
+        ? {
+            details: {
+              version: requiredDetails.name,
+              uploadDate: date,
+              description: requiredDetails.description,
+            },
+            files: [],
+          }
+        : {
+            name: requiredDetails.name,
+            details: {
+              version: "1.0.0",
+              uploadDate: date,
+              description: requiredDetails.description,
+            },
+            files: [],
+          };
 
     if (requiredDetails.default) {
       const svgContent = await readFileAsText(requiredDetails.default);
@@ -118,7 +129,10 @@ const useStagedFile = (token) => {
 
     requestData.files.push(...optionFiles.filter((file) => file !== null));
 
-    const requestResult = await initialRegistration(token, requestData);
+    const requestResult =
+      flag === "update"
+        ? await updateResourceVersion(token, resourceId, requestData)
+        : await initialRegistration(token, requestData);
 
     if (requestResult.error) {
       toast.error(requestResult.error);
@@ -126,15 +140,23 @@ const useStagedFile = (token) => {
       return;
     }
 
-    dispatch(
-      setUser({
-        categoryIds: requestResult.categoryIds,
-      }),
-    );
+    if (requestResult.categoryIds) {
+      dispatch(
+        setUser({
+          categoryIds: requestResult.categoryIds,
+        }),
+      );
 
-    toast.success("Upload successful!");
+      toast.success("Upload successful!");
 
-    navigate("/resource-list/brand-logo");
+      navigate(`/resource-list/${encodeURIComponent("Brand Logo")}`);
+    }
+
+    if (flag === "update") {
+      toast.success("Update successful!");
+    }
+
+    navigate(`/resource-list/${currentCategoryPath}`);
   };
 
   return {

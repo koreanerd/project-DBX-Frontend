@@ -40,6 +40,7 @@ function ImageGrid({ list, data }) {
       state: (resourceId) => ({
         resourceId,
         currentCategoryPath,
+        flag: "update",
       }),
     },
     resourceForm: {
@@ -50,9 +51,9 @@ function ImageGrid({ list, data }) {
     },
     versionList: {
       path: "/resource-version-list",
-      state: (currentId) => ({
+      state: (resourceId) => ({
         categoryId,
-        resourceId: currentId,
+        resourceId,
         currentCategoryPath,
       }),
     },
@@ -96,7 +97,17 @@ function ImageGrid({ list, data }) {
                   "absolute right-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
                 }
               />
-              <img src={modalContent} alt="" />
+
+              <NavigateButton
+                path={locationData.versionForm.path}
+                state={locationData.versionForm.state(currentId)}
+                title={"Update"}
+                className={
+                  "absolute left-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
+                }
+              />
+
+              <img src={modalContent} />
             </div>
           </div>,
           gridRef.current,
@@ -111,14 +122,7 @@ function ImageGrid({ list, data }) {
                 onClick={() => handleOpenModal(url, data[index].resourceId)}
               />
 
-              <div className="absolute flex justify-between left-0 right-0 bottom-0 w-4/6 m-auto text-xs pb-2 text-stone-100 font-normal">
-                <NavigateButton
-                  path={locationData.versionForm.path}
-                  state={locationData.versionForm.state(data[index].resourceId)}
-                  title={"Update"}
-                  className={"px-2 py-0.5 rounded-md bg-stone-800"}
-                />
-
+              <div className="absolute flex justify-center left-0 right-0 bottom-0 w-4/6 m-auto text-xs pb-2 text-stone-100 font-normal">
                 <button
                   type="button"
                   onClick={() => deleteResource(data[index].resourceId)}
@@ -131,7 +135,8 @@ function ImageGrid({ list, data }) {
           );
         })}
         <div className="relative bg-stone-100 rounded-xl">
-          <img src="/asset/blank_square.svg" alt="" />
+          <img src="/asset/blank_square.svg" />
+
           <NavigateButton
             path={locationData.resourceForm.path}
             state={locationData.resourceForm.state}

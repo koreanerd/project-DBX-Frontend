@@ -1,10 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Header from "@/views/header/Header";
-import InitialResourceForm from "@/views/forms/InitialResourceForm";
-import ResourceList from "@/views/resource-list/ResourceList";
-import ResourceVersionForm from "@/views/forms/ResourceVersionForm";
 import ResourceForm from "@/views/forms/ResourceForm";
+import ResourceList from "@/views/resource-list/ResourceList";
 import ResourceVersionList from "@/views/resource-version-list/ResourceVersionList";
 import LandingPage from "@/views/landing-page/LandingPage";
 import ErrorView from "@/views/ErrorView";
@@ -18,19 +16,13 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/initial-resource-form"
-          element={<InitialResourceForm />}
-        />
+        <Route path="/initial-resource-form" element={<ResourceForm />} />
         <Route path="/new-resource-form" element={<ResourceForm />} />
         <Route
           path="/resource-list/:currentCategoryPath"
           element={<ResourceList />}
         />
-        <Route
-          path="/new-resource-version-form"
-          element={<ResourceVersionForm />}
-        />
+        <Route path="/new-resource-version-form" element={<ResourceForm />} />
         <Route
           path="/resource-version-list"
           element={<ResourceVersionList />}

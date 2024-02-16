@@ -22,8 +22,10 @@ const useSelectResource = (categoryId) => {
       return;
     }
 
-    dispatch(setResourceInfo({ selectedResourceId: resourceId }));
-    dispatch(setResourceInfo({ selectedResourceCategoryId: categoryId }));
+    dispatch(
+      setResourceInfo({ selectedResourceCategoryId: requestResult.categoryId }),
+    );
+    dispatch(setResourceInfo({ selectedResourceId: requestResult.resourceId }));
     dispatch(setResourceInfo({ selectedResourceData: requestResult }));
   };
 

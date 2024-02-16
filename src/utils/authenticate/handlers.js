@@ -40,7 +40,7 @@ export const handleSignIn = async (dispatch, navigate) => {
     return;
   }
 
-  navigate("/resource-list/BrandLogo");
+  navigate(`/resource-list/${encodeURIComponent("Brand Logo")}`);
 };
 
 export const handleSignOut = async (dispatch, navigate) => {
