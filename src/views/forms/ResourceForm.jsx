@@ -5,7 +5,7 @@ import useStagedFile from "@/hooks/useStagedFile";
 
 function InitialResourceForm() {
   const location = useLocation();
-  const { currentCategoryPath, resourceId, flag } = location.state;
+  const { currentCategoryPath, categoryId, resourceId, flag } = location.state;
   const isInitialUser = useSelector((state) => state.user.isInitialUser);
   const token = useSelector((state) => state.user.token);
   const {
@@ -17,7 +17,7 @@ function InitialResourceForm() {
     handleSubmit,
     getRootProps,
     getInputProps,
-  } = useStagedFile(token, flag, resourceId, currentCategoryPath);
+  } = useStagedFile(token, flag, categoryId, resourceId, currentCategoryPath);
 
   return (
     <main>

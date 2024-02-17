@@ -12,7 +12,8 @@ function ResourceList() {
     (category) => category.name === currentCategoryPath,
   )?.id;
 
-  const { urlList, requestData, isLoading } = useFetchResourceList(categoryId);
+  const { urlList, requestData, isLoading, fetchData } =
+    useFetchResourceList(categoryId);
 
   return (
     <div className="flex w-screen h-screen">
@@ -23,7 +24,7 @@ function ResourceList() {
           Loading...
         </div>
       ) : (
-        <ImageGrid list={urlList} data={requestData} />
+        <ImageGrid list={urlList} data={requestData} requestData={fetchData} />
       )}
 
       <ControlPanel />

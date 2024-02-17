@@ -1,15 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/features/user/slice";
 import { toast } from "react-hot-toast";
 import { useDropzone } from "react-dropzone";
 import { initialRegistration } from "@/apis/users";
-import { updateResourceVersion } from "../apis/categories";
+import { addResource, updateResourceVersion } from "../apis/categories";
 
-const useStagedFile = (token, flag, resourceId, currentCategoryPath) => {
+const useStagedFile = (
+  token,
+  flag,
+  categoryId,
+  resourceId,
+  currentCategoryPath,
+) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isInitialUser = useSelector((state) => state.user.isInitialUser);
   const [previewFile, setPreviewFile] = useState(null);
   const [requiredDetails, setRequiredDetails] = useState({
     name: "",
@@ -129,10 +136,20 @@ const useStagedFile = (token, flag, resourceId, currentCategoryPath) => {
 
     requestData.files.push(...optionFiles.filter((file) => file !== null));
 
-    const requestResult =
-      flag === "update"
-        ? await updateResourceVersion(token, resourceId, requestData)
-        : await initialRegistration(token, requestData);
+    let requestResult;
+
+    if (flag === "update")
+      requestResult = await updateResourceVersion(
+        token,
+        resourceId,
+        requestData,
+      );
+
+    if (flag === "addResource")
+      requestResult = await addResource(token, categoryId, requestData);
+
+    if (isInitialUser)
+      requestResult = await initialRegistration(token, requestData);
 
     if (requestResult.error) {
       toast.error(requestResult.error);
@@ -153,7 +170,11 @@ const useStagedFile = (token, flag, resourceId, currentCategoryPath) => {
     }
 
     if (flag === "update") {
-      toast.success("Update successful!");
+      toast.success(requestResult.message);
+    }
+
+    if (flag === "addResource") {
+      toast.success(requestResult.message);
     }
 
     navigate(`/resource-list/${currentCategoryPath}`);

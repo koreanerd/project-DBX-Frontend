@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { deleteResourceData } from "@/apis/categories";
 import NavigateButton from "@/components/buttons/navigateButton";
 
-function ImageGrid({ list, data }) {
+function ImageGrid({ list, data, requestData }) {
   const { currentCategoryPath } = useParams();
   const token = useSelector((state) => state.user.token);
   const categoryIds = useSelector((state) => state.user.categoryIds);
@@ -46,7 +46,9 @@ function ImageGrid({ list, data }) {
     resourceForm: {
       path: "/new-resource-form",
       state: {
+        categoryId,
         currentCategoryPath,
+        flag: "addResource",
       },
     },
     versionList: {
@@ -73,6 +75,8 @@ function ImageGrid({ list, data }) {
     }
 
     toast.success(requestResult.message);
+
+    requestData(categoryId);
   };
 
   return (
@@ -154,6 +158,7 @@ function ImageGrid({ list, data }) {
 ImageGrid.propTypes = {
   list: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
+  requestData: PropTypes.func.isRequired,
 };
 
 export default ImageGrid;
