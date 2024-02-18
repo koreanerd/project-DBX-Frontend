@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { getResourceVersion } from "@/apis/categories";
 import NavigateButton from "@/components/buttons/navigateButton";
+import useDownloadFile from "../../utils/useDownloadFile";
 
 function ResourceVersionList() {
   const location = useLocation();
@@ -45,6 +46,8 @@ function ResourceVersionList() {
 
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  const { download } = useDownloadFile();
 
   useEffect(() => {
     fetchData();
@@ -111,11 +114,17 @@ function ResourceVersionList() {
                                 image
                               </span>
 
-                              <button type="button">{`${file.option}(svg)`}</button>
+                              <button
+                                type="button"
+                                onClick={() => download(file.svgUrl)}
+                              >{`${file.option}(svg)`}</button>
 
                               <p className="px-2"> / </p>
 
-                              <button type="button">{`${file.option}(png)`}</button>
+                              <button
+                                type="button"
+                                onClick={() => download(file.pngUrl)}
+                              >{`${file.option}(png)`}</button>
                             </div>
                             <div>
                               <p className="">

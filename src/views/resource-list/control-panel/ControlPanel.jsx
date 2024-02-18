@@ -1,10 +1,8 @@
 import { useSelector } from "react-redux";
-import { toast } from "react-hot-toast";
 import CopyLinkButton from "./CopyLinkButton";
-import { downloadResourFile } from "@/apis/categories";
+import useDownloadFile from "../../../utils/useDownloadFile";
 
 function ControlPanel() {
-  const token = useSelector((state) => state.user.token);
   const email = useSelector((state) => state.user.email);
   const resourceData = useSelector(
     (state) => state.resource.selectedResourceData,
@@ -21,31 +19,7 @@ function ControlPanel() {
     files,
   } = resourceData;
 
-  const download = async (url) => {
-    const requestResult = await downloadResourFile(token, url);
-
-    if (requestResult.error) {
-      toast.error(requestResult.error);
-
-      return;
-    }
-
-    toast.success("Download successful!");
-
-    const downloadUrl = window.URL.createObjectURL(requestResult);
-    const link = document.createElement("a");
-
-    link.href = downloadUrl;
-
-    const fileName = url.split("/").pop();
-
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(downloadUrl);
-  };
+  const { download } = useDownloadFile();
 
   return (
     <div className="w-1/5 h-full drop-shadow-2xl bg-stone-300">
