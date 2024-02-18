@@ -4,13 +4,13 @@ import { getResourceList } from "@/apis/categories";
 import { toast } from "react-hot-toast";
 
 const useFetchResourceList = (categoryId) => {
+  const token = useSelector((state) => state.user.token);
   const [isLoading, setIsLoading] = useState(true);
   const [urlList, setUrlList] = useState([]);
   const [requestData, setRequestData] = useState([]);
-  const token = useSelector((state) => state.user.token);
 
   const fetchData = useCallback(async () => {
-    if (!categoryId) {
+    if (!categoryId || !token) {
       setIsLoading(false);
 
       return;
@@ -35,7 +35,7 @@ const useFetchResourceList = (categoryId) => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [categoryId, token, fetchData]);
 
   return { urlList, requestData, isLoading, fetchData };
 };

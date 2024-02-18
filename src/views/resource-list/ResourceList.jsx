@@ -24,7 +24,7 @@ function ResourceList() {
           Loading...
         </div>
       ) : (
-        <ImageGrid list={urlList} data={requestData} requestData={fetchData} />
+        <ImageGrid list={urlList} data={requestData} refreshData={fetchData} />
       )}
 
       <ControlPanel />

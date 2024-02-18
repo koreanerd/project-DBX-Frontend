@@ -161,12 +161,15 @@ const useStagedFile = (
       dispatch(
         setUser({
           categoryIds: requestResult.categoryIds,
+          name: requestResult.name,
         }),
       );
 
       toast.success("Upload successful!");
 
-      navigate(`/resource-list/${encodeURIComponent("Brand Logo")}`);
+      navigate(`/setup-overview`);
+
+      return;
     }
 
     if (flag === "update") {

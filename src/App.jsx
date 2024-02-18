@@ -7,6 +7,7 @@ import ResourceVersionList from "@/views/resource-version-list/ResourceVersionLi
 import LandingPage from "@/views/landing-page/LandingPage";
 import ErrorView from "@/views/ErrorView";
 import useAuthState from "@/hooks/useAuthState";
+import PausePoin from "@/views/pause-point/PausePoint";
 
 function App() {
   useAuthState();
@@ -27,6 +28,7 @@ function App() {
           path="/resource-version-list"
           element={<ResourceVersionList />}
         />
+        <Route path="/setup-overview" element={<PausePoin />} />
         <Route path="/error" element={<ErrorView />} />
       </Routes>
       <Toaster />

@@ -3,7 +3,7 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const API_PATHS = {
   getResourceList: (categoryId) =>
-    `${API_BASE_URL}/api/v1/categories/${categoryId}/resource-list`,
+    `${API_BASE_URL}/api/v1/categories/${categoryId}/resources`,
   accessResource: (categoryId, resourceId) =>
     `${API_BASE_URL}/api/v1/categories/${categoryId}/resources/${resourceId}`,
   downLoadResorceFile: (url) =>
