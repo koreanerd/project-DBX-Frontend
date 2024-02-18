@@ -55,7 +55,15 @@ function ResourceVersionList() {
       {isLoading ? (
         <div className="w-3/5 bg-stone-100 rounded-2xl pb-10">Loading...</div>
       ) : (
-        <div className="w-3/5 bg-stone-100 rounded-2xl pb-10">
+        <div className="relative w-3/5 bg-stone-100 rounded-2xl pb-10">
+          <NavigateButton
+            path={`/resource-list/${currentCategoryPath}`}
+            title={"Back to List"}
+            className={
+              "absolute right-5 top-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
+            }
+          />
+
           {[...versionData].reverse().map((version, index) => {
             const currentVersion = version.details.version;
             const previousVersion = versionData[index + 1]
@@ -76,13 +84,6 @@ function ResourceVersionList() {
                           </p>
                         )}
                       </div>
-                      <NavigateButton
-                        path={`/resource-list/${currentCategoryPath}`}
-                        title={"Back to List"}
-                        className={
-                          "py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
-                        }
-                      />
                     </div>
 
                     <p className="text-lg font-semibold">Changes</p>
