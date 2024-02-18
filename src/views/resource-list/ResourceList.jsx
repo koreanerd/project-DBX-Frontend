@@ -5,6 +5,7 @@ import CategoryBar from "./CategoryBar";
 import ImageGrid from "./ImageGrid";
 import ControlPanel from "./control-panel/ControlPanel";
 import useFetchResourceList from "@/hooks/useFetchResourceList";
+import { useEffect } from "react";
 
 function ResourceList() {
   const { currentCategoryPath } = useParams();
@@ -14,7 +15,9 @@ function ResourceList() {
     (category) => category.name === currentCategoryPath,
   )?.id;
 
-  dispatch(clearResourceInfo());
+  useEffect(() => {
+    dispatch(clearResourceInfo());
+  }, [currentCategoryPath]);
 
   const { urlList, requestData, isLoading, fetchData } =
     useFetchResourceList(categoryId);
