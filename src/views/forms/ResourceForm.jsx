@@ -2,8 +2,9 @@ import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import FileUploadForm from "@/components/FileUploadForm";
 import useStagedFile from "@/hooks/useStagedFile";
+import NavigateButton from "@/components/buttons/navigateButton";
 
-function InitialResourceForm() {
+function ResourceForm() {
   const location = useLocation();
   const { currentCategoryPath, categoryId, resourceId, flag } = location.state;
   const isInitialUser = useSelector((state) => state.user.isInitialUser);
@@ -22,7 +23,17 @@ function InitialResourceForm() {
   return (
     <main>
       <div className="flex items-center justify-center w-screen h-screen">
-        <div className="p-10 bg-stone-100 rounded-lg drop-shadow-md w-3/5">
+        <div className="relative p-10 bg-stone-100 rounded-lg drop-shadow-md w-3/5">
+          {!isInitialUser && (
+            <NavigateButton
+              path={`/resource-list/${currentCategoryPath}`}
+              title={"Back to List"}
+              className={
+                "absolute right-5 top-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
+              }
+            />
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-3 h-fit">
               <div>
@@ -112,4 +123,4 @@ function InitialResourceForm() {
   );
 }
 
-export default InitialResourceForm;
+export default ResourceForm;
