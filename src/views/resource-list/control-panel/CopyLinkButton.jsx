@@ -1,14 +1,19 @@
-import { toast } from "react-hot-toast";
-import React, { useRef, useEffect } from "react";
+import PropTypes from "prop-types";
+import { useRef, useEffect } from "react";
 import ClipboardJS from "clipboard";
+import { toast } from "react-hot-toast";
 
-function CopyLinkButton({ linkToCopy }) {
+function CopyLinkButton({ resourceId, categoryId }) {
   const copyButtonRef = useRef(null);
   let clipboard = null;
 
+  const providedUrl = `${
+    import.meta.env.VITE_BACKEND_URL
+  }/dbx/categories/${categoryId}/resources/${resourceId}`;
+
   useEffect(() => {
     clipboard = new ClipboardJS(copyButtonRef.current, {
-      text: () => linkToCopy,
+      text: () => providedUrl,
     });
 
     clipboard.on("success", () => {
@@ -22,7 +27,7 @@ function CopyLinkButton({ linkToCopy }) {
     return () => {
       clipboard.destroy();
     };
-  }, [linkToCopy]);
+  }, [providedUrl]);
 
   return (
     <button ref={copyButtonRef} type="button">
@@ -30,5 +35,10 @@ function CopyLinkButton({ linkToCopy }) {
     </button>
   );
 }
+
+CopyLinkButton.propTypes = {
+  resourceId: PropTypes.string.isRequired,
+  categoryId: PropTypes.string.isRequired,
+};
 
 export default CopyLinkButton;

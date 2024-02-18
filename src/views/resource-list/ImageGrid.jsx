@@ -1,63 +1,87 @@
-import { useRef, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
-import axios from "axios";
-import UserContext from "@/contexts/UserContext";
+import { useSelector } from "react-redux";
+import useSelectResource from "@/hooks/useSelectResource";
+import toast from "react-hot-toast";
+import { deleteResourceData } from "@/apis/categories";
+import NavigateButton from "@/components/buttons/navigateButton";
 
-//eslint-disable-next-line react/prop-types
-function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
-  const user = useContext(UserContext);
-  const navigate = useNavigate();
-  const { isAdmin, categoriesId } = user;
+function ImageGrid({ list, data, refreshData }) {
+  const { currentCategoryPath } = useParams();
+  const token = useSelector((state) => state.user.token);
+  const categoryIds = useSelector((state) => state.user.categoryIds);
+  const categoryId = categoryIds.find(
+    (category) => category.name === currentCategoryPath,
+  )?.id;
+  const { imageSelector } = useSelectResource(categoryId);
   const gridRef = useRef();
+
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [currentId, setCurrentId] = useState(null);
-  const categoryId = categoriesId.find(
-    (item) => item.name === categoryName,
-  )?._id;
 
-  function handleOpenModal(img, id) {
+  const handleOpenModal = (img, id) => {
     setModalContent(img);
     setShowModal(true);
-    onImageSelect(id);
+    imageSelector(id);
     setCurrentId(id);
-  }
+  };
 
-  function handleCloseModal() {
+  const handleCloseModal = () => {
     setShowModal(false);
-    onImageSelect(null);
-  }
+    imageSelector(null);
+  };
 
-  function navigateToResourceVersionForm(id) {
-    navigate("/new-resource-version-form", {
-      state: { resourceId: id, categoryName },
-    });
-  }
+  const locationData = {
+    versionForm: {
+      path: "/new-resource-version-form",
+      state: (resourceId) => ({
+        resourceId,
+        currentCategoryPath,
+        flag: "update",
+      }),
+    },
+    resourceForm: {
+      path: "/new-resource-form",
+      state: {
+        categoryId,
+        currentCategoryPath,
+        flag: "addResource",
+      },
+    },
+    versionList: {
+      path: "/resource-version-list",
+      state: (resourceId) => ({
+        categoryId,
+        resourceId,
+        currentCategoryPath,
+      }),
+    },
+  };
 
-  function navigateToResourceForm() {
-    navigate("/new-resource-form", {
-      state: { categoryName },
-    });
-  }
-
-  function navigateToResourceVersions() {
-    navigate("/resource-version-list", {
-      state: { resourceId: currentId, categoryName },
-    });
-  }
-
-  async function resourceDelete(id) {
-    const response = await axios.delete(
-      `${
-        import.meta.env.VITE_SERVER_URL
-      }/categories/${categoryId}/resources/${id}`,
+  const deleteResource = async (resourceId) => {
+    const requestResult = await deleteResourceData(
+      token,
+      categoryId,
+      resourceId,
     );
 
-    if (response.data.result === "OK") {
-      fetchData();
+    if (requestResult.error) {
+      toast.error(requestResult.error);
+
+      return;
     }
-  }
+
+    toast.success(requestResult.message);
+
+    refreshData(categoryId);
+  };
+
+  useEffect(() => {
+    handleCloseModal();
+  }, [currentCategoryPath]);
 
   return (
     <div className="relative w-3/5 p-10 overflow-auto h-screen" ref={gridRef}>
@@ -73,75 +97,72 @@ function ImageGrid({ svgUrl, data, onImageSelect, categoryName, fetchData }) {
                 Close
               </button>
 
-              <button
-                type="button"
-                onClick={() =>
-                  //eslint-disable-next-line react/prop-types
-                  navigateToResourceVersions()
+              <NavigateButton
+                path={locationData.versionList.path}
+                state={locationData.versionList.state(currentId)}
+                title={"Previous version"}
+                className={
+                  "absolute right-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
                 }
-                className="absolute right-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
-              >
-                Previous version &gt;
-              </button>
-              <img src={modalContent} alt="" />
+              />
+
+              <NavigateButton
+                path={locationData.versionForm.path}
+                state={locationData.versionForm.state(currentId)}
+                title={"Update"}
+                className={
+                  "absolute left-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
+                }
+              />
+
+              <img src={modalContent} />
             </div>
           </div>,
           gridRef.current,
         )}
       <div className="grid grid-cols-4 gap-4">
-        {/*eslint-disable-next-line react/prop-types, array-callback-return */}
-        {svgUrl.map((url, index) => {
-          //eslint-disable-next-line no-useless-escape
-          const key = url.match(/\"(.+?)\"/)[1];
-
+        {list.map((url, index) => {
           return (
-            <div key={key} className="relative bg-stone-100 rounded-xl">
+            <div key={url} className="relative bg-stone-100 rounded-xl">
               <img
                 src={url}
                 alt=""
-                //eslint-disable-next-line react/prop-types
-                onClick={() => handleOpenModal(url, data[index].id)}
+                onClick={() => handleOpenModal(url, data[index].resourceId)}
               />
-              {isAdmin && (
-                <div className="absolute flex justify-between left-0 right-0 bottom-0 w-4/6 m-auto text-xs pb-2 text-stone-100 font-normal">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      //eslint-disable-next-line react/prop-types
-                      navigateToResourceVersionForm(data[index].id)
-                    }
-                    className="px-2 py-0.5 rounded-md bg-stone-800"
-                  >
-                    Update
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      //eslint-disable-next-line react/prop-types
-                      resourceDelete(data[index].id)
-                    }
-                    className="px-2 py-0.5 rounded-md bg-stone-800"
-                  >
-                    Delete
-                  </button>
-                </div>
-              )}
+
+              <div className="absolute flex justify-center left-0 right-0 bottom-0 w-4/6 m-auto text-xs pb-2 text-stone-100 font-normal">
+                <button
+                  type="button"
+                  onClick={() => deleteResource(data[index].resourceId)}
+                  className="px-2 py-0.5 rounded-md bg-stone-800"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           );
         })}
         <div className="relative bg-stone-100 rounded-xl">
-          <img src="/asset/blank_square.svg" alt="" />
-          <button
-            type="button"
-            onClick={() => navigateToResourceForm()}
-            className="absolute left-0 right-0 top-0 bottom-0 w-4/5 h-4/5 m-auto bg-white backdrop-filter rounded-xl p-1 text-5xl font-light text-stone-700 transform transition duration-500 hover:scale-105"
-          >
-            +
-          </button>
+          <img src="/asset/blank_square.svg" />
+
+          <NavigateButton
+            path={locationData.resourceForm.path}
+            state={locationData.resourceForm.state}
+            title={"+"}
+            className={
+              "absolute left-0 right-0 top-0 bottom-0 w-4/5 h-4/5 m-auto bg-white backdrop-filter rounded-xl p-1 text-5xl font-light text-stone-700 transform transition duration-500 hover:scale-105"
+            }
+          />
         </div>
       </div>
     </div>
   );
 }
+
+ImageGrid.propTypes = {
+  list: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
+  refreshData: PropTypes.func.isRequired,
+};
 
 export default ImageGrid;

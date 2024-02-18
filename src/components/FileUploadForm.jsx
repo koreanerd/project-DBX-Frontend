@@ -1,12 +1,13 @@
+import PropTypes from "prop-types";
 import { useRef } from "react";
 
-//eslint-disable-next-line react/prop-types
 function FileUploadForm({ mode, handleFileChange, logoImageByMode }) {
   const fileInputRef = useRef(null);
 
   return (
     <div className="flex col-span-3 mt-3">
       <h2 className="pr-10 w-40 text-right">{mode}</h2>
+
       <div className="flex justify-between flex-grow col-span-2 border border-stone-800 rounded-md h-7">
         <input
           type="file"
@@ -16,17 +17,17 @@ function FileUploadForm({ mode, handleFileChange, logoImageByMode }) {
             handleFileChange(event, mode);
           }}
         />
+
         <div
           className={`flex items-center ml-2 ${
             logoImageByMode ? `text-xs text-black` : `text-xs text-stone-400`
           }`}
         >
-          {/*eslint-disable react/prop-types */}
           {logoImageByMode
             ? logoImageByMode.name
             : "No files have been selected yet. *Please only upload SVG files!"}
-          {/*eslint-enable react/prop-types */}
         </div>
+
         <button
           type="button"
           onClick={() => fileInputRef.current.click()}
@@ -38,5 +39,11 @@ function FileUploadForm({ mode, handleFileChange, logoImageByMode }) {
     </div>
   );
 }
+
+FileUploadForm.propTypes = {
+  mode: PropTypes.string.isRequired,
+  handleFileChange: PropTypes.func.isRequired,
+  logoImageByMode: PropTypes.object,
+};
 
 export default FileUploadForm;
