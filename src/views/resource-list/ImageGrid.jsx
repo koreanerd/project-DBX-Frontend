@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
@@ -78,6 +78,10 @@ function ImageGrid({ list, data, refreshData }) {
 
     refreshData(categoryId);
   };
+
+  useEffect(() => {
+    handleCloseModal();
+  }, [currentCategoryPath]);
 
   return (
     <div className="relative w-3/5 p-10 overflow-auto h-screen" ref={gridRef}>

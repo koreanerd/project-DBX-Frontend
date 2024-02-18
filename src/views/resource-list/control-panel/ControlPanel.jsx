@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import CopyLinkButton from "./CopyLinkButton";
-
 import { downloadResourFile } from "@/apis/categories";
 
 function ControlPanel() {
@@ -59,8 +58,8 @@ function ControlPanel() {
       </div>
 
       <div className="p-6">
-        {resourceData.files && (
-          <>
+        {resourceData.files ? (
+          <div>
             <div className="p-3 bg-stone-600 text-stone-100 rounded-xl mb-5">
               <h2 className="text-xl font-bold mb-2">{resourceName}</h2>
               <p>Category: {categoryName}</p>
@@ -81,7 +80,9 @@ function ControlPanel() {
             </div>
 
             <h3 className="text-lg font-bold mt-4">Files:</h3>
-          </>
+          </div>
+        ) : (
+          ""
         )}
 
         <ul>
