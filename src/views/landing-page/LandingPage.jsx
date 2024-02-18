@@ -1,5 +1,5 @@
-import AuthenticationButton from "../../components/buttons/AuthenticationButton";
-import { handleSignIn } from "../../utils/authenticate/handlers";
+import AuthenticationButton from "@/components/buttons/AuthenticationButton";
+import { handleSignIn } from "@/utils/authenticate/handlers";
 
 function LandingPage() {
   return (

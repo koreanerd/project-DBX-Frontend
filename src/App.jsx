@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Header from "@/views/header/Header";
-import ResourceForm from "@/views/forms/ResourceForm";
+import ResourceForm from "@/views/resource-form/ResourceForm";
 import ResourceList from "@/views/resource-list/ResourceList";
 import ResourceVersionList from "@/views/resource-version-list/ResourceVersionList";
 import LandingPage from "@/views/landing-page/LandingPage";
-import ErrorView from "@/views/ErrorView";
+import ErrorView from "@/views/error-page/ErrorView";
 import useAuthState from "@/hooks/useAuthState";
 import PausePoin from "@/views/pause-point/PausePoint";
 

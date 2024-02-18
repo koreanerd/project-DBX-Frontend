@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { getResourceVersion } from "@/apis/categories";
 import NavigateButton from "@/components/buttons/navigateButton";
-import useDownloadFile from "../../utils/useDownloadFile";
+import useDownloadFile from "@/hooks/useDownloadFile";
 
 function ResourceVersionList() {
   const location = useLocation();

@@ -5,7 +5,7 @@ import { forwardRef } from "react";
 
 const AuthenticationButton = forwardRef(
   function AuthenticationButton(props, ref) {
-    const { handler, title, css, ariaLabel } = props;
+    const { handler, title, icon, css, ariaLabel } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -18,7 +18,7 @@ const AuthenticationButton = forwardRef(
           handler(dispatch, navigate);
         }}
       >
-        {title}
+        {title || icon}
       </button>
     );
   },
@@ -26,7 +26,7 @@ const AuthenticationButton = forwardRef(
 
 AuthenticationButton.propTypes = {
   handler: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   css: PropTypes.string.isRequired,
   icon: PropTypes.node,
   ariaLabel: PropTypes.string.isRequired,

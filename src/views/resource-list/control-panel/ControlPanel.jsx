@@ -1,6 +1,9 @@
 import { useSelector } from "react-redux";
 import CopyLinkButton from "./CopyLinkButton";
-import useDownloadFile from "../../../utils/useDownloadFile";
+import useDownloadFile from "@/hooks/useDownloadFile";
+import { handleSignOut } from "@/utils/authenticate/handlers";
+import AuthenticationButton from "@/components/buttons/AuthenticationButton";
+import { signOutIcon } from "@/assets/svgIcons";
 
 function ControlPanel() {
   const email = useSelector((state) => state.user.email);
@@ -23,11 +26,18 @@ function ControlPanel() {
 
   return (
     <div className="w-1/5 h-full drop-shadow-2xl bg-stone-300">
-      <div className="flex items-center bg-stone-100 h-16 text-stone-500">
-        <div className="flex items-center ml-6">
+      <div className="flex items-center justify-center w-full h-16 bg-stone-100 text-stone-500">
+        <div className="flex items-center justify-between">
           <div className="w-8 h-8 rounded-md bg-green-400"></div>
 
-          <p className="ml-4">{email}</p>
+          <p className="mx-5">{email}</p>
+
+          <AuthenticationButton
+            handler={handleSignOut}
+            icon={signOutIcon}
+            css="text-stone-500"
+            ariaLabel="Logout button"
+          />
         </div>
       </div>
 

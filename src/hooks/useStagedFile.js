@@ -5,7 +5,7 @@ import { setUser } from "@/features/user/slice";
 import { toast } from "react-hot-toast";
 import { useDropzone } from "react-dropzone";
 import { initialRegistration } from "@/apis/users";
-import { addResource, updateResourceVersion } from "../apis/categories";
+import { addResource, updateResourceVersion } from "@/apis/categories";
 
 const useStagedFile = (
   token,
