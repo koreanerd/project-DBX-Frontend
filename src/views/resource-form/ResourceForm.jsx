@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import FileUploadForm from "@/components/FileUploadForm";
 import useStagedFile from "@/hooks/useStagedFile";
-import NavigateButton from "@/components/buttons/navigateButton";
+import NavigateButton from "@/components/buttons/NavigateButton";
 
 function ResourceForm() {
   const location = useLocation();
