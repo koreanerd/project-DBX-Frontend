@@ -27,6 +27,6 @@ module.exports = {
     "no-inline-comments": "error",
     "spaced-comment": ["error", "never"],
     "react-hooks/exhaustive-deps": "off",
-    "react/prop-types": "off",
+    "react/prop-types": "error",
   },
 };
