@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import useSelectResource from "@/hooks/useSelectResource";
 import toast from "react-hot-toast";
 import { deleteResourceData } from "@/apis/categories";
-import NavigateButton from "@/components/buttons/navigateButton";
+import NavigateButton from "@/components/buttons/NavigateButton";
 
 function ImageGrid({ list, data, refreshData }) {
   const { currentCategoryPath } = useParams();

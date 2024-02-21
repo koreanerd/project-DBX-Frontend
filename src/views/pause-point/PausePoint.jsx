@@ -1,4 +1,4 @@
-import NavigateButton from "@/components/buttons/navigateButton";
+import NavigateButton from "@/components/buttons/NavigateButton";
 import { useSelector } from "react-redux";
 import useAuthState from "@/hooks/useAuthState";
 

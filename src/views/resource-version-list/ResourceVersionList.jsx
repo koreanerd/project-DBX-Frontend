@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { getResourceVersion } from "@/apis/categories";
-import NavigateButton from "@/components/buttons/navigateButton";
+import NavigateButton from "@/components/buttons/NavigateButton";
 import useDownloadFile from "@/hooks/useDownloadFile";
 
 function ResourceVersionList() {
