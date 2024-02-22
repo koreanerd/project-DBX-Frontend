@@ -143,7 +143,7 @@ function ImageGrid({ list, data, refreshData }) {
           );
         })}
         <div className="relative bg-stone-100 rounded-xl">
-          <img src="/asset/blank_square.svg" />
+          <img src="/blank_square.svg" />
 
           <NavigateButton
             path={locationData.resourceForm.path}
