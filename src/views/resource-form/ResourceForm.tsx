@@ -1,24 +1,43 @@
 import { useLocation } from "react-router-dom";
+import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import FileUploadForm from "@/components/FileUploadForm";
 import useStagedFile from "@/hooks/useStagedFile";
 import NavigateButton from "@/components/buttons/NavigateButton";
 
+interface LocationState {
+  currentCategoryPath: string;
+  categoryId: string;
+  resourceId: string;
+  flag: string;
+}
+
 function ResourceForm() {
   const location = useLocation();
-  const { currentCategoryPath, categoryId, resourceId, flag } = location.state;
-  const isInitialUser = useSelector((state) => state.user.isInitialUser);
-  const token = useSelector((state) => state.user.token);
+  const state = location.state as LocationState;
+  const { currentCategoryPath, categoryId, resourceId, flag } = state;
+
+  const isInitialUser = useSelector(
+    (state: RootState) => state.user.isInitialUser,
+  );
+  const token = useSelector((state: RootState) => state.user.token);
+
   const {
     previewFile,
     requiredDetails,
-    logoByOptions,
+    imageByOptions,
     handleOnChange,
     handleFileChange,
     handleSubmit,
     getRootProps,
     getInputProps,
-  } = useStagedFile(token, flag, categoryId, resourceId, currentCategoryPath);
+  } = useStagedFile({
+    token,
+    flag,
+    categoryId,
+    resourceId,
+    currentCategoryPath,
+  });
 
   return (
     <main>
@@ -100,12 +119,12 @@ function ResourceForm() {
             </div>
 
             <div className="mt-10">
-              {Object.keys(logoByOptions).map((option) => (
+              {Object.keys(imageByOptions).map((option) => (
                 <FileUploadForm
                   key={option}
-                  mode={option}
+                  option={option}
                   handleFileChange={(event) => handleFileChange(event, option)}
-                  logoImageByMode={logoByOptions[option]}
+                  imageByOption={imageByOptions[option]}
                 />
               ))}
             </div>

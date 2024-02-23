@@ -1,13 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 
 function CategoryBar() {
   const navigate = useNavigate();
   const { currentCategoryPath } = useParams();
-  const categoryIds = useSelector((state) => state.user.categoryIds);
+  const categoryIds = useSelector((state: RootState) => state.user.categoryIds);
   const categoriesName = categoryIds.map((category) => category.name);
 
-  const handleCategoryChange = (newCategory) => {
+  const handleCategoryChange = (newCategory: string) => {
     navigate(`/resource-list/${newCategory}`);
   };
 

@@ -1,13 +1,29 @@
 import { useEffect, useState, useCallback } from "react";
+import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { getResourceList } from "@/apis/categories";
 import { toast } from "react-hot-toast";
 
-const useFetchResourceList = (categoryId) => {
-  const token = useSelector((state) => state.user.token);
+interface ResourceData {
+  resourceId: string;
+  svgUrl: string;
+}
+
+interface UseFetchResourceListReturn {
+  urlList: string[];
+  requestData: ResourceData[];
+  isLoading: boolean;
+  fetchData: (categoryId: string) => Promise<void>;
+}
+
+const useFetchResourceList = (
+  categoryId: string,
+): UseFetchResourceListReturn => {
+  const token = useSelector((state: RootState) => state.user.token);
+
   const [isLoading, setIsLoading] = useState(true);
-  const [urlList, setUrlList] = useState([]);
-  const [requestData, setRequestData] = useState([]);
+  const [urlList, setUrlList] = useState<string[]>([]);
+  const [requestData, setRequestData] = useState<ResourceData[]>([]);
 
   const fetchData = useCallback(async () => {
     if (!categoryId || !token) {
@@ -28,7 +44,11 @@ const useFetchResourceList = (categoryId) => {
       return;
     }
 
-    setUrlList(requestResult.resourceList.map((resource) => resource.svgUrl));
+    setUrlList(
+      requestResult.resourceList.map(
+        (resource: ResourceData) => resource.svgUrl,
+      ),
+    );
     setRequestData(requestResult.resourceList);
     setIsLoading(false);
   }, [categoryId, token]);

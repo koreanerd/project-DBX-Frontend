@@ -1,29 +1,86 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/features/user/slice";
 import { toast } from "react-hot-toast";
 import { useDropzone } from "react-dropzone";
+import { DropzoneRootProps, DropzoneInputProps } from "react-dropzone";
 import { initialRegistration } from "@/apis/users";
 import { addResource, updateResourceVersion } from "@/apis/categories";
 
-const useStagedFile = (
+interface RequiredDetails {
+  name: string;
+  description: string;
+  default: File | null;
+}
+
+interface ImageByOptions {
+  "Dark Mode": File | null;
+  "1.5x": File | null;
+  "2x": File | null;
+  "3x": File | null;
+  "4x": File | null;
+}
+
+interface FileDetail {
+  option: string;
+  svgContent: string;
+}
+
+interface RequestData {
+  name?: string;
+  details: {
+    version: string;
+    uploadDate: string;
+    description: string;
+  };
+  files: FileDetail[];
+}
+
+interface UseStagedFileArgs {
+  token: string | null;
+  flag: string;
+  categoryId: string;
+  resourceId: string;
+  currentCategoryPath: string;
+}
+
+interface UseStagedFileReturn {
+  previewFile: string | null;
+  requiredDetails: RequiredDetails;
+  imageByOptions: ImageByOptions;
+  handleOnChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  handleFileChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    option: string,
+  ) => void;
+  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  getRootProps: (props?: DropzoneRootProps) => DropzoneRootProps;
+  getInputProps: (props?: DropzoneInputProps) => DropzoneInputProps;
+}
+
+const useStagedFile = ({
   token,
   flag,
   categoryId,
   resourceId,
   currentCategoryPath,
-) => {
+}: UseStagedFileArgs): UseStagedFileReturn => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isInitialUser = useSelector((state) => state.user.isInitialUser);
-  const [previewFile, setPreviewFile] = useState(null);
-  const [requiredDetails, setRequiredDetails] = useState({
+  const isInitialUser = useSelector(
+    (state: RootState) => state.user.isInitialUser,
+  );
+  const [previewFile, setPreviewFile] = useState<string | null>(null);
+  const [requiredDetails, setRequiredDetails] = useState<RequiredDetails>({
     name: "",
     description: "",
     default: null,
   });
-  const [logoByOptions, setlogoByOptions] = useState({
+  const [imageByOptions, setImageByOptions] = useState<ImageByOptions>({
     "Dark Mode": null,
     "1.5x": null,
     "2x": null,
@@ -31,13 +88,13 @@ const useStagedFile = (
     "4x": null,
   });
 
-  const handleOnChange = (event) => {
+  const handleOnChange: UseStagedFileReturn["handleOnChange"] = (event) => {
     const { name, value } = event.target;
 
     setRequiredDetails((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onDrop = (stagedFile) => {
+  const onDrop = (stagedFile: File[]) => {
     const file = stagedFile[0];
 
     if (file && file.type !== "image/svg+xml") {
@@ -50,7 +107,7 @@ const useStagedFile = (
 
     reader.readAsDataURL(file);
     reader.onloadend = () => {
-      setPreviewFile(reader.result);
+      setPreviewFile(reader.result as string | null);
     };
 
     setRequiredDetails((prev) => ({ ...prev, default: file }));
@@ -71,24 +128,27 @@ const useStagedFile = (
       return;
     }
 
-    setlogoByOptions((prev) => ({ ...prev, [option]: file }));
+    setImageByOptions((prev) => ({ ...prev, [option]: file }));
   };
 
-  const readFileAsText = (file) => {
+  const readFileAsText = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
-      reader.onload = (event) => resolve(event.target.result);
+      reader.onload = (event) => {
+        if (event.target && typeof event.target.result === "string")
+          resolve(event.target.result);
+      };
       reader.onerror = (error) => reject(error);
       reader.readAsText(file);
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit: UseStagedFileReturn["handleSubmit"] = async (event) => {
     event.preventDefault();
 
     const date = new Date().toString();
-    const requestData =
+    const requestData: RequestData =
       flag === "update"
         ? {
             details: {
@@ -117,8 +177,8 @@ const useStagedFile = (
       });
     }
 
-    const optionPromises = Object.keys(logoByOptions).map(async (option) => {
-      const file = logoByOptions[option];
+    const optionPromises = Object.keys(imageByOptions).map(async (option) => {
+      const file = imageByOptions[option];
 
       if (file) {
         const svgContent = await readFileAsText(file);
@@ -134,7 +194,9 @@ const useStagedFile = (
 
     const optionFiles = await Promise.all(optionPromises);
 
-    requestData.files.push(...optionFiles.filter((file) => file !== null));
+    requestData.files.push(
+      ...optionFiles.filter((file): file is FileDetail => file !== null),
+    );
 
     let requestResult;
 
@@ -186,7 +248,7 @@ const useStagedFile = (
   return {
     previewFile,
     requiredDetails,
-    logoByOptions,
+    imageByOptions,
     handleOnChange,
     handleFileChange,
     handleSubmit,

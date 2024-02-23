@@ -2,17 +2,17 @@ import { callApi } from "@/utils/api";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const API_PATHS = {
-  getResourceList: (categoryId) =>
+  getResourceList: (categoryId: string) =>
     `${API_BASE_URL}/api/v1/categories/${categoryId}/resources`,
-  accessResource: (categoryId, resourceId) =>
+  accessResource: (categoryId: string, resourceId: string) =>
     `${API_BASE_URL}/api/v1/categories/${categoryId}/resources/${resourceId}`,
-  downLoadResorceFile: (url) =>
+  downLoadResorceFile: (url: string) =>
     `${API_BASE_URL}/api/v1/categories/resources/versions/files/download?url=${encodeURIComponent(url)}`,
-  getResourceVersion: (categoryId, resourceId) =>
+  getResourceVersion: (categoryId: string, resourceId: string) =>
     `${API_BASE_URL}/api/v1/categories/${categoryId}/resources/${resourceId}/versions`,
-  updateResourceVersion: (resourceId) =>
+  updateResourceVersion: (resourceId: string) =>
     `${API_BASE_URL}/api/v1/categories/resources/${resourceId}/versions/`,
-  addResource: (categoryId) =>
+  addResource: (categoryId: string) =>
     `${API_BASE_URL}/api/v1/categories/${categoryId}/resources`,
 };
 

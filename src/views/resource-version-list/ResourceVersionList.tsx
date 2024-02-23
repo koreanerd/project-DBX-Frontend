@@ -1,18 +1,41 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { getResourceVersion } from "@/apis/categories";
 import NavigateButton from "@/components/buttons/NavigateButton";
 import useDownloadFile from "@/hooks/useDownloadFile";
 
+interface File {
+  option: string;
+  svgContent: string;
+  _id: string;
+  svgUrl: string;
+  pngUrl: string;
+}
+
+interface VersionDetail {
+  _id: string;
+  details: {
+    version: string;
+    uploadDate: string;
+    author: string;
+    description: string;
+  };
+  name: string;
+  categoryId: string;
+  files: File[];
+  __v: number;
+}
+
 function ResourceVersionList() {
   const location = useLocation();
   const { categoryId, resourceId, currentCategoryPath } = location.state;
-  const token = useSelector((state) => state.user.token);
+  const token = useSelector((state: RootState) => state.user.token);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [versionData, setVersionData] = useState([]);
+  const [versionData, setVersionData] = useState<VersionDetail[]>([]);
 
   const fetchData = async () => {
     if (!token) {
@@ -41,8 +64,12 @@ function ResourceVersionList() {
     setIsLoading(false);
   };
 
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
 
     return new Date(dateString).toLocaleDateString(undefined, options);
   };

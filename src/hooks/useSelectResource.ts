@@ -2,10 +2,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { setResourceInfo, clearResourceInfo } from "@/features/resource/slice";
 import { getResourceInfo } from "@/apis/categories";
 import { toast } from "react-hot-toast";
+import { RootState } from "@/store";
 
 const useSelectResource = (categoryId) => {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.user.token);
+  const token = useSelector((state: RootState) => state.user.token);
 
   const imageSelector = async (resourceId) => {
     if (!resourceId) {
