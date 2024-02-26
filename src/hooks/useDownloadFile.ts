@@ -1,9 +1,10 @@
+import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { downloadResourFile } from "@/apis/categories";
 
 const useDownloadFile = () => {
-  const token = useSelector((state) => state.user.token);
+  const token = useSelector((state: RootState) => state.user.token);
 
   const download = async (url) => {
     const requestResult = await downloadResourFile(token, url);

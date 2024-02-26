@@ -1,4 +1,4 @@
-export const callApi = async (url, option, flag) => {
+export const callApi = async (url, option, flag?) => {
   try {
     const response = await fetch(url, option);
 
