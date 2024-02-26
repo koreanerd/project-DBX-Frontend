@@ -51,7 +51,7 @@ function ControlPanel() {
       </div>
 
       <div className="p-6">
-        {resourceData.files ? (
+        {resourceData.files.length !== 0 ? (
           <div>
             <div className="p-3 bg-stone-600 text-stone-100 rounded-xl mb-5">
               <h2 className="text-xl font-bold mb-2">{resourceName}</h2>
