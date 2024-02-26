@@ -1,3 +1,4 @@
+import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import CopyLinkButton from "./CopyLinkButton";
 import useDownloadFile from "@/hooks/useDownloadFile";
@@ -5,10 +6,18 @@ import { handleSignOut } from "@/utils/authenticate/handlers";
 import AuthenticationButton from "@/components/buttons/AuthenticationButton";
 import { signOutIcon } from "@/assets/svgIcons";
 
+interface File {
+  option: string;
+  svgContent: string;
+  _id: string;
+  svgUrl: string;
+  pngUrl: string;
+}
+
 function ControlPanel() {
-  const email = useSelector((state) => state.user.email);
+  const email = useSelector((state: RootState) => state.user.email);
   const resourceData = useSelector(
-    (state) => state.resource.selectedResourceData,
+    (state: RootState) => state.resource.selectedResourceData,
   );
 
   const {
@@ -35,7 +44,7 @@ function ControlPanel() {
           <AuthenticationButton
             handler={handleSignOut}
             icon={signOutIcon}
-            css="text-stone-500"
+            className="text-stone-500"
             ariaLabel="Logout button"
           />
         </div>
@@ -50,7 +59,10 @@ function ControlPanel() {
 
               <p>Author: {authorName}</p>
 
-              <p>Upload date: {new Date(uploadDate).toLocaleDateString()}</p>
+              <p>
+                Upload date:{" "}
+                {uploadDate && new Date(uploadDate).toLocaleDateString()}
+              </p>
 
               <p>Version: {version}</p>
             </div>
@@ -60,7 +72,12 @@ function ControlPanel() {
                 content_paste
               </span>
 
-              <CopyLinkButton resourceId={resourceId} categoryId={categoryId} />
+              {resourceId && categoryId && (
+                <CopyLinkButton
+                  resourceId={resourceId}
+                  categoryId={categoryId}
+                />
+              )}
             </div>
 
             <h3 className="text-lg font-bold mt-4">Files:</h3>
@@ -70,7 +87,7 @@ function ControlPanel() {
         )}
 
         <ul>
-          {files?.map((file) => (
+          {files?.map((file: File) => (
             <li key={file._id} className=" p-3 bg-stone-100 mb-5 rounded-xl">
               <h4 className="mb-3 px-3 bg-stone-400 inline-block text-stone-100 text-md font-semibold rounded-full">{`${file.option}`}</h4>
 

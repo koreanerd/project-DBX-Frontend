@@ -1,28 +1,39 @@
-import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
+import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import useSelectResource from "@/hooks/useSelectResource";
 import toast from "react-hot-toast";
 import { deleteResourceData } from "@/apis/categories";
 import NavigateButton from "@/components/buttons/NavigateButton";
 
-function ImageGrid({ list, data, refreshData }) {
+interface ResourceData {
+  resourceId: string;
+  svgUrl: string;
+}
+
+interface ImageGridProps {
+  list: string[];
+  data: ResourceData[];
+  refreshData: (categoryId: string) => Promise<void>;
+}
+
+function ImageGrid({ list, data, refreshData }: ImageGridProps) {
   const { currentCategoryPath } = useParams();
-  const token = useSelector((state) => state.user.token);
-  const categoryIds = useSelector((state) => state.user.categoryIds);
+  const token = useSelector((state: RootState) => state.user.token);
+  const categoryIds = useSelector((state: RootState) => state.user.categoryIds);
   const categoryId = categoryIds.find(
     (category) => category.name === currentCategoryPath,
   )?.id;
   const { imageSelector } = useSelectResource(categoryId);
-  const gridRef = useRef();
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [currentId, setCurrentId] = useState(null);
+  const [modalContent, setModalContent] = useState<string | null>(null);
+  const [currentId, setCurrentId] = useState<string | null>(null);
 
-  const handleOpenModal = (img, id) => {
+  const handleOpenModal = (img: string, id: string) => {
     setModalContent(img);
     setShowModal(true);
     imageSelector(id);
@@ -37,7 +48,7 @@ function ImageGrid({ list, data, refreshData }) {
   const locationData = {
     versionForm: {
       path: "/new-resource-version-form",
-      state: (resourceId) => ({
+      state: (resourceId: string) => ({
         resourceId,
         currentCategoryPath,
         flag: "update",
@@ -53,7 +64,7 @@ function ImageGrid({ list, data, refreshData }) {
     },
     versionList: {
       path: "/resource-version-list",
-      state: (resourceId) => ({
+      state: (resourceId: string) => ({
         categoryId,
         resourceId,
         currentCategoryPath,
@@ -61,7 +72,7 @@ function ImageGrid({ list, data, refreshData }) {
     },
   };
 
-  const deleteResource = async (resourceId) => {
+  const deleteResource = async (resourceId: string) => {
     const requestResult = await deleteResourceData(
       token,
       categoryId,
@@ -76,7 +87,7 @@ function ImageGrid({ list, data, refreshData }) {
 
     toast.success(requestResult.message);
 
-    refreshData(categoryId);
+    if (categoryId) refreshData(categoryId);
   };
 
   useEffect(() => {
@@ -86,6 +97,7 @@ function ImageGrid({ list, data, refreshData }) {
   return (
     <div className="relative w-3/5 p-10 overflow-auto h-screen" ref={gridRef}>
       {showModal &&
+        gridRef.current &&
         createPortal(
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="relative w-1/2 bg-stone-100 p-5 rounded-xl">
@@ -97,25 +109,29 @@ function ImageGrid({ list, data, refreshData }) {
                 Close
               </button>
 
-              <NavigateButton
-                path={locationData.versionList.path}
-                state={locationData.versionList.state(currentId)}
-                title={"Previous version"}
-                className={
-                  "absolute right-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
-                }
-              />
+              {currentId && (
+                <NavigateButton
+                  path={locationData.versionList.path}
+                  state={locationData.versionList.state(currentId)}
+                  title={"Previous version"}
+                  className={
+                    "absolute right-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
+                  }
+                />
+              )}
 
-              <NavigateButton
-                path={locationData.versionForm.path}
-                state={locationData.versionForm.state(currentId)}
-                title={"Update"}
-                className={
-                  "absolute left-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
-                }
-              />
+              {currentId && (
+                <NavigateButton
+                  path={locationData.versionForm.path}
+                  state={locationData.versionForm.state(currentId)}
+                  title={"Update"}
+                  className={
+                    "absolute left-0 bottom-0 m-5 py-0.5 px-3 bg-stone-800 rounded-full text-sm text-stone-100 font-semibold"
+                  }
+                />
+              )}
 
-              <img src={modalContent} />
+              {modalContent && <img src={modalContent} />}
             </div>
           </div>,
           gridRef.current,
@@ -158,11 +174,5 @@ function ImageGrid({ list, data, refreshData }) {
     </div>
   );
 }
-
-ImageGrid.propTypes = {
-  list: PropTypes.array.isRequired,
-  data: PropTypes.array.isRequired,
-  refreshData: PropTypes.func.isRequired,
-};
 
 export default ImageGrid;

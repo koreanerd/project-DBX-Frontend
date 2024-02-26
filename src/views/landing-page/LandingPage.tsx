@@ -11,7 +11,7 @@ function LandingPage() {
           <AuthenticationButton
             handler={handleSignIn}
             title="Login with Google"
-            css="block mx-auto mb-2.5 border border-black rounded-md bg-black text-1xl w-52 h-10 text-zinc-200"
+            className="block mx-auto mb-2.5 border border-black rounded-md bg-black text-1xl w-52 h-10 text-zinc-200"
             ariaLabel="Login button"
           />
 

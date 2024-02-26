@@ -1,9 +1,10 @@
 import NavigateButton from "@/components/buttons/NavigateButton";
+import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import useAuthState from "@/hooks/useAuthState";
 
 function PausePoin() {
-  const name = useSelector((state) => state.user.name);
+  const name = useSelector((state: RootState) => state.user.name);
 
   useAuthState();
 
