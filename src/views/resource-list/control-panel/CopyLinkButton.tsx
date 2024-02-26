@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import * as ClipboardJS from "clipboard";
+import ClipboardJS from "clipboard";
 import { toast } from "react-hot-toast";
 
 interface CopyLinkButtonProps {
