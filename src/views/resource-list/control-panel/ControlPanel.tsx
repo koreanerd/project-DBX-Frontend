@@ -22,7 +22,6 @@ function ControlPanel() {
 
   const {
     resourceId,
-    categoryId,
     categoryName,
     authorName,
     resourceName,
@@ -72,12 +71,7 @@ function ControlPanel() {
                 content_paste
               </span>
 
-              {resourceId && categoryId && (
-                <CopyLinkButton
-                  resourceId={resourceId}
-                  categoryId={categoryId}
-                />
-              )}
+              {resourceId && <CopyLinkButton resourceId={resourceId} />}
             </div>
 
             <h3 className="text-lg font-bold mt-4">Files:</h3>
