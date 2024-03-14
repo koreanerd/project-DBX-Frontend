@@ -1,41 +1,33 @@
-import { useRef, useEffect } from "react";
-import ClipboardJS from "clipboard";
+import { useRef } from "react";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import { getFixedUrl } from "@/apis/dbxServices";
 
 interface CopyLinkButtonProps {
   resourceId: string;
-  categoryId: string;
 }
 
-function CopyLinkButton({ resourceId, categoryId }: CopyLinkButtonProps) {
-  const copyButtonRef = useRef(null);
+function CopyLinkButton({ resourceId }: CopyLinkButtonProps) {
+  const token = useSelector((state: RootState) => state.user.token);
+  const copyButtonRef = useRef<HTMLButtonElement>(null);
 
-  const providedUrl = `${
-    import.meta.env.VITE_BACKEND_URL
-  }/dbx/categories/${categoryId}/resources/${resourceId}`;
+  const handleCopyClick = async () => {
+    const requestResult = await getFixedUrl(token, resourceId);
 
-  useEffect(() => {
-    if (copyButtonRef.current) {
-      const clipboard = new ClipboardJS(copyButtonRef.current, {
-        text: () => providedUrl,
-      });
+    if (requestResult.error) {
+      toast.error(requestResult.error);
 
-      clipboard.on("success", () => {
-        toast.success("Copy success!");
-      });
-
-      clipboard.on("error", () => {
-        toast.error("Copy failed...");
-      });
-
-      return () => {
-        clipboard.destroy();
-      };
+      return;
     }
-  }, [providedUrl]);
+
+    await navigator.clipboard.writeText(requestResult);
+
+    toast.success("Copy success!");
+  };
 
   return (
-    <button ref={copyButtonRef} type="button">
+    <button ref={copyButtonRef} type="button" onClick={handleCopyClick}>
       Copy provided link
     </button>
   );
